@@ -13,10 +13,10 @@ schema.extendType({
     t.field("game", {
       type: "Game",
       args: {
-        id: schema.idArg(),
+        id: schema.idArg({ required: true }),
       },
-      resolve(_root, args, ctx) {
-        const game = ctx.db.games.find((g) => g.id === args.id);
+      async resolve(_root, args, ctx) {
+        const game = await ctx.db.game.findOne({ where: { id: args.id } });
         return game || null;
       },
     });
@@ -32,13 +32,10 @@ schema.extendType({
       args: {
         name: schema.stringArg(),
       },
-      resolve(_root, args, ctx) {
-        const newGame = {
-          id: `${ctx.db.games.length + 1}`,
-          name: args.name || "No name",
-        };
-        ctx.db.games.push(newGame);
-        return newGame;
+      async resolve(_root, args, ctx) {
+        return await ctx.db.game.create({
+          data: { name: args.name || "No name" },
+        });
       },
     });
   },

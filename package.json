@@ -2,20 +2,22 @@
   "name": "script",
   "license": "MIT",
   "version": "0.0.1",
-  "devDependencies": {
-    "@prisma/cli": "2.0.0",
-    "ts-node": "8.7.0",
-    "typescript": "3.8.3"
-  },
   "scripts": {
     "dev": "nexus dev",
     "build": "nexus build",
-    "prisma-script": "ts-node ./script.ts",
-    "test": "jest"
+    "test": "jest",
+    "prisma-script": "ts-node ./script.ts"
   },
   "dependencies": {
-    "@prisma/client": "2.0.0",
-    "nexus": "^0.24.2"
+    "@types/jest": "^26.0.3",
+    "jest": "^26.1.0",
+    "nexus": "^0.24.2",
+    "nexus-plugin-prisma": "^0.10.0",
+    "ts-jest": "^26.1.1"
+  },
+  "devDependencies": {
+    "ts-node": "8.7.0",
+    "typescript": "3.8.3"
   },
   "engines": {
     "node": ">=10.0.0"
