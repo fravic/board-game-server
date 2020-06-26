@@ -4,6 +4,11 @@
     "outDir": "dist",
     "strict": true,
     "lib": ["esnext", "dom"],
-    "esModuleInterop": true
-  }
+    "esModuleInterop": true,
+    "typeRoots": ["node_modules/@types", "types"],
+    "rootDir": ".",
+    "noEmit": true,
+    "plugins": [{ "name": "nexus/typescript-language-service" }]
+  },
+  "include": ["types.d.ts", "."]
 }
