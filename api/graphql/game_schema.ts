@@ -1,15 +1,19 @@
 import { schema } from "nexus";
 
+import { Game } from "../models/game";
+import { Player } from "../models/player";
+
 schema.objectType({
   name: "Game",
+  rootTyping: "Game",
   definition(t) {
     t.id("id"),
       t.string("name"),
       t.int("numPlayers"),
       t.list.field("players", {
         type: "Player",
-        resolve(root, _args, ctx) {
-          return ctx.db.player.findMany({ where: { gameId: root.id } });
+        async resolve(root, _args, _ctx) {
+          return root.players;
         },
       });
   },
@@ -24,7 +28,7 @@ schema.extendType({
         id: schema.idArg({ required: true }),
       },
       async resolve(_root, args, ctx) {
-        const game = await ctx.db.game.findOne({ where: { id: args.id } });
+        const game = await Game.fetch(ctx.redis, args.id);
         return game || null;
       },
     });
@@ -42,9 +46,12 @@ schema.extendType({
         numPlayers: schema.intArg({ required: true }),
       },
       async resolve(_root, args, ctx) {
-        return await ctx.db.game.create({
-          data: { name: args.name || "No name", numPlayers: args.numPlayers },
+        const game = new Game({
+          name: args.name || "No name",
+          numPlayers: args.numPlayers,
         });
+        game.save(ctx.redis);
+        return game;
       },
     });
   },
@@ -61,9 +68,10 @@ schema.extendType({
         name: schema.stringArg({ required: true }),
       },
       async resolve(_root, args, ctx) {
-        const player = await ctx.db.player.create({
-          data: { name: args.name, game: { connect: { id: args.gameId } } },
-        });
+        const player = new Player(args.name);
+        const game = await Game.fetch(ctx.redis, args.gameId);
+        game.players.push(player);
+        await game.save(ctx.redis);
         return player;
       },
     });

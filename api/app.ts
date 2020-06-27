@@ -1,4 +1,9 @@
-import { use } from "nexus";
-import { prisma } from "nexus-plugin-prisma";
+import { schema } from "nexus";
 
-use(prisma());
+import { redis } from "./redis";
+
+schema.addToContext(() => {
+  return {
+    redis,
+  };
+});

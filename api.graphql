@@ -27,7 +27,6 @@ type Mutation {
 }
 
 type Player {
-  id: ID
   name: String
 }
 

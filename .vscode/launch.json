@@ -1,0 +1,16 @@
+// https://www.nexusjs.org/#/references/recipes?id=with-vs-code
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Debug Nexus App",
+      "protocol": "inspector",
+      "runtimeExecutable": "${workspaceRoot}/node_modules/.bin/nexus",
+      "runtimeArgs": ["dev"],
+      "sourceMaps": true,
+      "console": "integratedTerminal"
+    }
+  ]
+}
