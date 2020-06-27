@@ -12,6 +12,8 @@ scalar DateTime
 type Game {
   id: ID
   name: String
+  numPlayers: Int
+  players: [Player!]
 }
 
 """
@@ -20,7 +22,13 @@ The `JSON` scalar type represents JSON objects as specified by [ECMA-404](http:/
 scalar Json
 
 type Mutation {
-  createGame(name: String): Game!
+  addPlayerToGame(gameId: ID!, name: String!): Player!
+  createGame(name: String, numPlayers: Int!): Game!
+}
+
+type Player {
+  id: ID
+  name: String
 }
 
 type Query {
