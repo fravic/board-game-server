@@ -1,8 +1,8 @@
-import { schema } from "nexus";
+import * as schema from "@nexus/schema";
 
 export const PlayerGQL = schema.objectType({
   name: "Player",
-  rootTyping: "Player",
+  rootTyping: { path: "../models/player", name: "Player" },
   definition(t) {
     t.string("name");
   },

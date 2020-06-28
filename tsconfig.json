@@ -6,9 +6,7 @@
     "lib": ["esnext", "dom"],
     "esModuleInterop": true,
     "typeRoots": ["node_modules/@types", "types"],
-    "rootDir": ".",
-    "noEmit": true,
-    "plugins": [{ "name": "nexus/typescript-language-service" }]
+    "rootDir": "."
   },
   "include": ["types.d.ts", "."]
 }
