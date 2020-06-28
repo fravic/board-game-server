@@ -2,8 +2,9 @@ import { schema } from "nexus";
 
 import { Game } from "../models/game";
 import { Player } from "../models/player";
+import { PlayerGQL } from "./player_schema";
 
-schema.objectType({
+export const GameGQL = schema.objectType({
   name: "Game",
   rootTyping: "Game",
   definition(t) {
@@ -11,7 +12,7 @@ schema.objectType({
       t.string("name"),
       t.int("numPlayers"),
       t.list.field("players", {
-        type: "Player",
+        type: PlayerGQL,
         async resolve(root, _args, _ctx) {
           return root.players;
         },
@@ -23,7 +24,7 @@ schema.extendType({
   type: "Query",
   definition(t) {
     t.field("game", {
-      type: "Game",
+      type: GameGQL,
       args: {
         id: schema.idArg({ required: true }),
       },
@@ -39,7 +40,7 @@ schema.extendType({
   type: "Mutation",
   definition(t) {
     t.field("createGame", {
-      type: "Game",
+      type: GameGQL,
       nullable: false,
       args: {
         name: schema.stringArg(),
@@ -61,7 +62,7 @@ schema.extendType({
   type: "Mutation",
   definition(t) {
     t.field("addPlayerToGame", {
-      type: "Player",
+      type: PlayerGQL,
       nullable: false,
       args: {
         gameId: schema.idArg({ required: true }),

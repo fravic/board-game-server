@@ -1,6 +1,6 @@
 import { schema } from "nexus";
 
-schema.objectType({
+export const PlayerGQL = schema.objectType({
   name: "Player",
   rootTyping: "Player",
   definition(t) {
