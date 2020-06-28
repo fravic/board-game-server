@@ -1,12 +1,12 @@
 import { makeSchema } from "@nexus/schema";
 import path from "path";
 
-import { ActionsSubscriptionGQL } from "./action_schema";
-import { Mutation } from "./mutation";
-import { Query } from "./query";
+import * as actionSchema from "./action_schema";
+import * as gameSchema from "./game_schema";
+import * as playerSchema from "./player_schema";
 
 export const schema = makeSchema({
-  types: [Query, Mutation, ActionsSubscriptionGQL],
+  types: [actionSchema, gameSchema, playerSchema],
   typegenAutoConfig: {
     sources: [
       { source: path.join(__dirname, "../context.ts"), alias: "context" },
