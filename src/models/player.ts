@@ -1,7 +1,7 @@
 export class Player {
   name: string;
 
-  constructor(name: string) {
-    this.name = name;
+  constructor(fields: Pick<Player, "name">) {
+    this.name = fields.name ?? "No name";
   }
 }

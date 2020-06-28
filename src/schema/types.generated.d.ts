@@ -4,6 +4,7 @@
  */
 
 import * as context from "../context"
+import { GameEvent } from "../models/game_event"
 import { Game } from "../models/game"
 import { Player } from "../models/player"
 
@@ -21,18 +22,14 @@ export interface NexusGenEnums {
 }
 
 export interface NexusGenRootTypes {
-  Action: { // root type
-    type: string; // String!
-  }
-  ActionSubscriptionPayload: { // root type
-    action: NexusGenRootTypes['Action']; // Action!
-    game: NexusGenRootTypes['Game']; // Game!
-  }
   Game: Game;
+  GameStartedEvent: {};
   Mutation: {};
   Player: Player;
+  PlayerJoinedEvent: {};
   Query: {};
   Subscription: {};
+  GameEvent: GameEvent;
   String: string;
   Int: number;
   Float: number;
@@ -44,31 +41,34 @@ export interface NexusGenAllTypes extends NexusGenRootTypes {
 }
 
 export interface NexusGenFieldTypes {
-  Action: { // field return type
-    type: string; // String!
-  }
-  ActionSubscriptionPayload: { // field return type
-    action: NexusGenRootTypes['Action']; // Action!
-    game: NexusGenRootTypes['Game']; // Game!
-  }
   Game: { // field return type
     id: string; // ID!
     name: string; // String!
     numPlayers: number; // Int!
     players: NexusGenRootTypes['Player'][]; // [Player!]!
   }
+  GameStartedEvent: { // field return type
+    game: NexusGenRootTypes['Game']; // Game!
+  }
   Mutation: { // field return type
-    addPlayerToGame: NexusGenRootTypes['Player']; // Player!
+    addPlayerToGame: NexusGenRootTypes['Game']; // Game!
     createGame: NexusGenRootTypes['Game']; // Game!
+    startGame: NexusGenRootTypes['Game']; // Game!
   }
   Player: { // field return type
     name: string; // String!
+  }
+  PlayerJoinedEvent: { // field return type
+    game: NexusGenRootTypes['Game']; // Game!
   }
   Query: { // field return type
     game: NexusGenRootTypes['Game']; // Game!
   }
   Subscription: { // field return type
-    actions: NexusGenRootTypes['ActionSubscriptionPayload']; // ActionSubscriptionPayload!
+    gameEvents: NexusGenRootTypes['GameEvent']; // GameEvent!
+  }
+  GameEvent: { // field return type
+    game: NexusGenRootTypes['Game']; // Game!
   }
 }
 
@@ -82,26 +82,35 @@ export interface NexusGenArgTypes {
       name?: string | null; // String
       numPlayers: number; // Int!
     }
+    startGame: { // args
+      gameId: string; // ID!
+    }
   }
   Query: {
     game: { // args
       id: string; // ID!
     }
   }
+  Subscription: {
+    gameEvents: { // args
+      gameId: string; // ID!
+    }
+  }
 }
 
 export interface NexusGenAbstractResolveReturnTypes {
+  GameEvent: "GameStartedEvent" | "PlayerJoinedEvent"
 }
 
 export interface NexusGenInheritedFields {}
 
-export type NexusGenObjectNames = "Action" | "ActionSubscriptionPayload" | "Game" | "Mutation" | "Player" | "Query" | "Subscription";
+export type NexusGenObjectNames = "Game" | "GameStartedEvent" | "Mutation" | "Player" | "PlayerJoinedEvent" | "Query" | "Subscription";
 
 export type NexusGenInputNames = never;
 
 export type NexusGenEnumNames = never;
 
-export type NexusGenInterfaceNames = never;
+export type NexusGenInterfaceNames = "GameEvent";
 
 export type NexusGenScalarNames = "Boolean" | "Float" | "ID" | "Int" | "String";
 

@@ -3,25 +3,26 @@ import { RedisPubSub } from "graphql-redis-subscriptions";
 import { promisify } from "util";
 
 const DEFAULT_REDIS_PORT = 6379;
-const redisClient = _redis.createClient({
-  port: process.env.REDIS_PORT
-    ? parseInt(process.env.REDIS_PORT)
-    : DEFAULT_REDIS_PORT,
-});
+const port = process.env.REDIS_PORT
+  ? parseInt(process.env.REDIS_PORT)
+  : DEFAULT_REDIS_PORT;
 
-const subscriptionClient = _redis.createClient({
-  port: process.env.REDIS_PORT
-    ? parseInt(process.env.REDIS_PORT)
-    : DEFAULT_REDIS_PORT,
-});
+function createRedisClient() {
+  return _redis.createClient({
+    port,
+  });
+}
+
+const defaultRedisClient = createRedisClient();
+
 const pubsub = new RedisPubSub({
-  publisher: subscriptionClient,
-  subscriber: subscriptionClient,
+  publisher: createRedisClient(),
+  subscriber: createRedisClient(),
 });
 
 export const redis = {
-  get: promisify(redisClient.get).bind(redisClient),
-  set: promisify(redisClient.set).bind(redisClient),
+  get: promisify(defaultRedisClient.get).bind(defaultRedisClient),
+  set: promisify(defaultRedisClient.set).bind(defaultRedisClient),
   pubsub,
 };
 

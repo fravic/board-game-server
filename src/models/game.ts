@@ -9,10 +9,10 @@ export class Game {
   numPlayers: number;
   players: Array<Player> = [];
 
-  constructor(fields: Partial<Game>) {
+  constructor(fields: Pick<Game, "name"> & Partial<Game>) {
     const { id, name, numPlayers, players } = fields;
     this.id = id ?? uuid();
-    this.name = name ?? "";
+    this.name = name;
     this.numPlayers = numPlayers ?? 1;
     this.players = players ?? this.players;
   }

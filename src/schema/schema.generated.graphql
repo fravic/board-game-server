@@ -2,15 +2,6 @@
 ### Do not make changes to this file directly
 
 
-type Action {
-  type: String!
-}
-
-type ActionSubscriptionPayload {
-  action: Action!
-  game: Game!
-}
-
 type Game {
   id: ID!
   name: String!
@@ -18,13 +9,26 @@ type Game {
   players: [Player!]!
 }
 
+interface GameEvent {
+  game: Game!
+}
+
+type GameStartedEvent implements GameEvent {
+  game: Game!
+}
+
 type Mutation {
-  addPlayerToGame(gameId: ID!, name: String!): Player!
+  addPlayerToGame(gameId: ID!, name: String!): Game!
   createGame(name: String, numPlayers: Int!): Game!
+  startGame(gameId: ID!): Game!
 }
 
 type Player {
   name: String!
+}
+
+type PlayerJoinedEvent implements GameEvent {
+  game: Game!
 }
 
 type Query {
@@ -32,5 +36,5 @@ type Query {
 }
 
 type Subscription {
-  actions: ActionSubscriptionPayload!
+  gameEvents(gameId: ID!): GameEvent!
 }

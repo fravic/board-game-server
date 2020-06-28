@@ -3,20 +3,25 @@ import * as schema from "@nexus/schema";
 import { Game } from "../models/game";
 import { Player } from "../models/player";
 import { PlayerGQL } from "./player_schema";
+import {
+  GameEvent,
+  PlayerJoinedEvent,
+  GameStartedEvent,
+} from "../models/game_event";
 
 export const GameGQL = schema.objectType({
   name: "Game",
   rootTyping: { path: "../models/game", name: "Game" },
   definition(t) {
-    t.id("id"),
-      t.string("name"),
-      t.int("numPlayers"),
-      t.list.field("players", {
-        type: PlayerGQL,
-        async resolve(root, _args, _ctx) {
-          return root.players;
-        },
-      });
+    t.id("id");
+    t.string("name");
+    t.int("numPlayers");
+    t.list.field("players", {
+      type: PlayerGQL,
+      async resolve(root, _args, _ctx) {
+        return root.players;
+      },
+    });
   },
 });
 
@@ -57,18 +62,30 @@ export const Mutation = schema.extendType({
     });
 
     t.field("addPlayerToGame", {
-      type: PlayerGQL,
+      type: GameGQL,
       nullable: false,
       args: {
         gameId: schema.idArg({ required: true }),
         name: schema.stringArg({ required: true }),
       },
       async resolve(_root, args, ctx) {
-        const player = new Player(args.name);
-        const game = await Game.fetch(ctx.redis, args.gameId);
-        game.players.push(player);
-        await game.save(ctx.redis);
-        return player;
+        const { gameId } = args;
+        const player = new Player({ name: args.name });
+        const event = new PlayerJoinedEvent({ gameId, player });
+        return await event.processAndPublish(ctx.redis);
+      },
+    });
+
+    t.field("startGame", {
+      type: GameGQL,
+      nullable: false,
+      args: {
+        gameId: schema.idArg({ required: true }),
+      },
+      async resolve(_root, args, ctx) {
+        const { gameId } = args;
+        const event = new GameStartedEvent({ gameId });
+        return await event.processAndPublish(ctx.redis);
       },
     });
   },
