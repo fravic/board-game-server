@@ -2,19 +2,15 @@
 ### Do not make changes to this file directly
 
 
-type Game {
+type Game implements Node {
   id: ID!
   name: String!
   numPlayers: Int!
   players: [Player!]!
 }
 
-interface GameEvent {
-  game: Game!
-}
-
-type GameStartedEvent implements GameEvent {
-  game: Game!
+type GameEvent {
+  changedNodes: [Node!]!
 }
 
 type Mutation {
@@ -23,12 +19,12 @@ type Mutation {
   startGame(gameId: ID!): Game!
 }
 
-type Player {
-  name: String!
+interface Node {
+  id: ID!
 }
 
-type PlayerJoinedEvent implements GameEvent {
-  game: Game!
+type Player {
+  name: String!
 }
 
 type Query {

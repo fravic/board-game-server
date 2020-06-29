@@ -4,8 +4,8 @@
  */
 
 import * as context from "../context"
-import { GameEvent } from "../api/game_event"
 import { Game } from "../api/game"
+import { Node } from "../api/node"
 import { Player } from "../api/player"
 
 
@@ -23,13 +23,14 @@ export interface NexusGenEnums {
 
 export interface NexusGenRootTypes {
   Game: Game;
-  GameStartedEvent: {};
+  GameEvent: { // root type
+    changedNodes: NexusGenRootTypes['Node'][]; // [Node!]!
+  }
   Mutation: {};
   Player: Player;
-  PlayerJoinedEvent: {};
   Query: {};
   Subscription: {};
-  GameEvent: GameEvent;
+  Node: Node;
   String: string;
   Int: number;
   Float: number;
@@ -47,8 +48,8 @@ export interface NexusGenFieldTypes {
     numPlayers: number; // Int!
     players: NexusGenRootTypes['Player'][]; // [Player!]!
   }
-  GameStartedEvent: { // field return type
-    game: NexusGenRootTypes['Game']; // Game!
+  GameEvent: { // field return type
+    changedNodes: NexusGenRootTypes['Node'][]; // [Node!]!
   }
   Mutation: { // field return type
     addPlayerToGame: NexusGenRootTypes['Game']; // Game!
@@ -58,17 +59,14 @@ export interface NexusGenFieldTypes {
   Player: { // field return type
     name: string; // String!
   }
-  PlayerJoinedEvent: { // field return type
-    game: NexusGenRootTypes['Game']; // Game!
-  }
   Query: { // field return type
     game: NexusGenRootTypes['Game']; // Game!
   }
   Subscription: { // field return type
     gameEvents: NexusGenRootTypes['GameEvent']; // GameEvent!
   }
-  GameEvent: { // field return type
-    game: NexusGenRootTypes['Game']; // Game!
+  Node: { // field return type
+    id: string; // ID!
   }
 }
 
@@ -99,18 +97,18 @@ export interface NexusGenArgTypes {
 }
 
 export interface NexusGenAbstractResolveReturnTypes {
-  GameEvent: "GameStartedEvent" | "PlayerJoinedEvent"
+  Node: "Game"
 }
 
 export interface NexusGenInheritedFields {}
 
-export type NexusGenObjectNames = "Game" | "GameStartedEvent" | "Mutation" | "Player" | "PlayerJoinedEvent" | "Query" | "Subscription";
+export type NexusGenObjectNames = "Game" | "GameEvent" | "Mutation" | "Player" | "Query" | "Subscription";
 
 export type NexusGenInputNames = never;
 
 export type NexusGenEnumNames = never;
 
-export type NexusGenInterfaceNames = "GameEvent";
+export type NexusGenInterfaceNames = "Node";
 
 export type NexusGenScalarNames = "Boolean" | "Float" | "ID" | "Int" | "String";
 

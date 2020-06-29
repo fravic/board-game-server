@@ -3,10 +3,11 @@ import path from "path";
 
 import * as eventSchema from "./game_event_schema";
 import * as gameSchema from "./game_schema";
+import * as nodeSchema from "./node_schema";
 import * as playerSchema from "./player_schema";
 
 export const schema = makeSchema({
-  types: [eventSchema, gameSchema, playerSchema],
+  types: [eventSchema, gameSchema, nodeSchema, playerSchema],
   typegenAutoConfig: {
     sources: [
       { source: path.join(__dirname, "../context.ts"), alias: "context" },

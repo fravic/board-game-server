@@ -1,13 +1,15 @@
 import * as schema from "@nexus/schema";
 
-import { gameApi } from "../api/game";
-import { gameEventApi, gameEvents } from "../api/game_event";
+import * as action from "../api/action";
+import * as gameApi from "../api/game";
 import { PlayerGQL } from "./player_schema";
+import { NodeGQL } from "./node_schema";
 
 export const GameGQL = schema.objectType({
   name: "Game",
   rootTyping: { path: "../api/game", name: "Game" },
   definition(t) {
+    t.implements(NodeGQL);
     t.id("id");
     t.string("name");
     t.int("numPlayers");
@@ -66,9 +68,9 @@ export const Mutation = schema.extendType({
       async resolve(_root, args, ctx) {
         const { gameId } = args;
         const player = { name: args.name };
-        return await gameEventApi.processAndPublish(
-          gameEvents.playerJoined(player),
+        return await gameApi.dispatchAction(
           gameId,
+          action.playerJoin(player),
           ctx.redis
         );
       },
@@ -82,9 +84,9 @@ export const Mutation = schema.extendType({
       },
       async resolve(_root, args, ctx) {
         const { gameId } = args;
-        return await gameEventApi.processAndPublish(
-          gameEvents.gameStarted(),
+        return await gameApi.dispatchAction(
           gameId,
+          action.gameStart(),
           ctx.redis
         );
       },
