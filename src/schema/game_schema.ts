@@ -1,17 +1,12 @@
 import * as schema from "@nexus/schema";
 
-import { Game } from "../models/game";
-import { Player } from "../models/player";
+import { gameApi } from "../api/game";
+import { gameEventApi } from "../api/game_event";
 import { PlayerGQL } from "./player_schema";
-import {
-  GameEvent,
-  PlayerJoinedEvent,
-  GameStartedEvent,
-} from "../models/game_event";
 
 export const GameGQL = schema.objectType({
   name: "Game",
-  rootTyping: { path: "../models/game", name: "Game" },
+  rootTyping: { path: "../api/game", name: "Game" },
   definition(t) {
     t.id("id");
     t.string("name");
@@ -34,7 +29,7 @@ export const Query = schema.extendType({
         id: schema.idArg({ required: true }),
       },
       async resolve(_root, args, ctx) {
-        const game = await Game.fetch(ctx.redis, args.id);
+        const game = await gameApi.fetch(ctx.redis, args.id);
         return game || null;
       },
     });
@@ -52,11 +47,11 @@ export const Mutation = schema.extendType({
         numPlayers: schema.intArg({ required: true }),
       },
       async resolve(_root, args, ctx) {
-        const game = new Game({
+        const game = gameApi.create({
           name: args.name || "No name",
           numPlayers: args.numPlayers,
         });
-        game.save(ctx.redis);
+        gameApi.save(game, ctx.redis);
         return game;
       },
     });
@@ -70,9 +65,12 @@ export const Mutation = schema.extendType({
       },
       async resolve(_root, args, ctx) {
         const { gameId } = args;
-        const player = new Player({ name: args.name });
-        const event = new PlayerJoinedEvent({ gameId, player });
-        return await event.processAndPublish(ctx.redis);
+        const player = { name: args.name };
+        return await gameEventApi.processAndPublish.playerJoined(
+          gameId,
+          player,
+          ctx.redis
+        );
       },
     });
 
@@ -84,8 +82,10 @@ export const Mutation = schema.extendType({
       },
       async resolve(_root, args, ctx) {
         const { gameId } = args;
-        const event = new GameStartedEvent({ gameId });
-        return await event.processAndPublish(ctx.redis);
+        return await gameEventApi.processAndPublish.gameStarted(
+          gameId,
+          ctx.redis
+        );
       },
     });
   },

@@ -4,9 +4,9 @@
  */
 
 import * as context from "../context"
-import { GameEvent } from "../models/game_event"
-import { Game } from "../models/game"
-import { Player } from "../models/player"
+import { GameEvent } from "../api/game_event"
+import { Game } from "../api/game"
+import { Player } from "../api/player"
 
 
 

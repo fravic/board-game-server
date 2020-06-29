@@ -5,18 +5,18 @@ import {
   idArg,
 } from "@nexus/schema";
 
-import { Game } from "../models/game";
-import { GameEvent } from "../models/game_event";
+import { Game, gameApi } from "../api/game";
+import { gameEventApi } from "../api/game_event";
 import { GameGQL } from "./game_schema";
 
 export const GameEventGQL = interfaceType({
   name: "GameEvent",
-  rootTyping: { path: "../models/game_event", name: "GameEvent" },
+  rootTyping: { path: "../api/game_event", name: "GameEvent" },
   definition(t) {
     t.field("game", {
       type: GameGQL,
       resolve(root, _args, ctx) {
-        return Game.fetch(ctx.redis, root.gameId);
+        return gameApi.fetch(ctx.redis, root.gameId);
       },
     });
     t.resolveType((root) => {
@@ -46,6 +46,6 @@ export const GameEventSubscriptionGQL = subscriptionField("gameEvents", {
     return ctx.redis.pubsub.asyncIterator(args.gameId);
   },
   async resolve(payload, _args, ctx) {
-    return GameEvent.rehydrate(ctx.redis, payload);
+    return JSON.parse(payload);
   },
 });
