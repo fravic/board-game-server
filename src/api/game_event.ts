@@ -16,33 +16,46 @@ export const gameEventApi = {
     await redis.pubsub.publish(gameEvent.gameId, JSON.stringify(gameEvent));
   },
 
-  processAndPublish: {
-    async playerJoined(
-      gameId: string,
-      player: Player,
-      redis: Redis
-    ): Promise<Game> {
-      const game = await gameApi.fetch(redis, gameId);
-      game.players.push(player);
-      await gameApi.save(game, redis);
+  // Process an event's effects on a game and then call publish
+  async processAndPublish(
+    eventFunc: GameEventFuncType,
+    gameId: string,
+    redis: Redis
+  ): Promise<Game> {
+    const fetchedGame = await gameApi.fetch(redis, gameId);
+    const { game, gameEvent } = await eventFunc(fetchedGame);
+    await this.publish(gameEvent, redis);
+    return game;
+  },
+};
+
+type GameEventFuncType = (
+  game: Game
+) => Promise<{ game: Game; gameEvent: GameEvent }>;
+
+export const gameEvents = {
+  playerJoined(player: Player): GameEventFuncType {
+    return async (prevGame: Game) => {
+      const game = {
+        ...prevGame,
+        players: [...prevGame.players, player],
+      };
       const gameEvent: GameEvent = {
         gameId: game.id,
         gqlName: "PlayerJoinedEvent",
       };
-      await gameEventApi.publish(gameEvent, redis);
-      return game;
-    },
+      return { game, gameEvent };
+    };
+  },
 
-    async gameStarted(gameId: string, redis: Redis) {
-      const game = await gameApi.fetch(redis, gameId);
+  gameStarted(): GameEventFuncType {
+    return async (game: Game) => {
       // TODO: Kick off the game
-      await gameApi.save(game, redis);
       const gameEvent: GameEvent = {
         gameId: game.id,
         gqlName: "GameStartedEvent",
       };
-      await gameEventApi.publish(gameEvent, redis);
-      return game;
-    },
+      return { game, gameEvent };
+    };
   },
 };

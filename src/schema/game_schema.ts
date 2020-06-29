@@ -1,7 +1,7 @@
 import * as schema from "@nexus/schema";
 
 import { gameApi } from "../api/game";
-import { gameEventApi } from "../api/game_event";
+import { gameEventApi, gameEvents } from "../api/game_event";
 import { PlayerGQL } from "./player_schema";
 
 export const GameGQL = schema.objectType({
@@ -66,9 +66,9 @@ export const Mutation = schema.extendType({
       async resolve(_root, args, ctx) {
         const { gameId } = args;
         const player = { name: args.name };
-        return await gameEventApi.processAndPublish.playerJoined(
+        return await gameEventApi.processAndPublish(
+          gameEvents.playerJoined(player),
           gameId,
-          player,
           ctx.redis
         );
       },
@@ -82,7 +82,8 @@ export const Mutation = schema.extendType({
       },
       async resolve(_root, args, ctx) {
         const { gameId } = args;
-        return await gameEventApi.processAndPublish.gameStarted(
+        return await gameEventApi.processAndPublish(
+          gameEvents.gameStarted(),
           gameId,
           ctx.redis
         );
