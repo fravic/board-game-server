@@ -7,7 +7,7 @@
       "request": "launch",
       "name": "Debug Nexus App",
       "protocol": "inspector",
-      "runtimeExecutable": "${workspaceRoot}/node_modules/.bin/nexus",
+      "runtimeExecutable": "${workspaceRoot}/server/node_modules/.bin/nexus",
       "runtimeArgs": ["dev"],
       "sourceMaps": true,
       "console": "integratedTerminal"

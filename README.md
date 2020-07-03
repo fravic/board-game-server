@@ -12,6 +12,9 @@ Backend server for a generic board game. Design goals:
 
 ## Development
 
+# Server
+
+- `cd server`
 - `yarn install` to install JS/TS packages
 - `yarn dev-redis` to start Redis in Docker
 - `yarn dev` to start Nexus devserver
