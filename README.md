@@ -12,9 +12,14 @@ Backend server for a generic board game. Design goals:
 
 ## Development
 
-# Server
+### Server (port 4000)
 
 - `cd server`
 - `yarn install` to install JS/TS packages
 - `yarn dev-redis` to start Redis in Docker
 - `yarn dev` to start Nexus devserver
+
+### Client (port 3000)
+
+- `cd client`
+- `yarn start` to start devserver
