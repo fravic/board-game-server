@@ -43,7 +43,9 @@ export async function dispatchAction(
   const fetchedGame = await fetch(redis, gameId);
   const changedNodes: Array<Node> = [];
   const game = gameReducer(fetchedGame, action, changedNodes);
+  await save(game, redis);
   await redis.pubsub.publish(gameId, JSON.stringify({ changedNodes }));
+  console.dir([action, game], { depth: null });
   return game;
 }
 

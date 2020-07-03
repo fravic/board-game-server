@@ -6,7 +6,6 @@ export const NodeGQL = interfaceType({
   definition(t) {
     t.id("id");
     t.resolveType((root) => {
-      console.log("resolve!", root);
       return root.gqlName as any;
     });
   },
