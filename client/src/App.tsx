@@ -4,6 +4,7 @@ import { InMemoryCache } from "apollo-cache-inmemory";
 import { SubscriptionClient } from "subscriptions-transport-ws";
 import { WebSocketLink } from "apollo-link-ws";
 import React from "react";
+import { BrowserRouter, Route, Switch } from "react-router-dom";
 
 import { Game } from "./Game";
 import { Lobby } from "./Lobby";
@@ -24,10 +25,14 @@ const client = new ApolloClient({
 });
 
 export function App() {
-  const [gameId, setGameId] = React.useState<string | null>(null);
   return (
     <ApolloProvider client={client}>
-      {gameId ? <Game gameId={gameId} /> : <Lobby onSetGameId={setGameId} />}
+      <BrowserRouter>
+        <Switch>
+          <Route path="/game/:gameId" component={Game} />
+          <Route path="*" component={Lobby} />
+        </Switch>
+      </BrowserRouter>
     </ApolloProvider>
   );
 }

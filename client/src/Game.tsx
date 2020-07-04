@@ -1,6 +1,7 @@
 import { useQuery, useSubscription } from "@apollo/react-hooks";
 import gql from "graphql-tag";
 import React from "react";
+import { useParams } from "react-router-dom";
 
 const gameQueryGql = gql`
   query Game($id: ID!) {
@@ -29,20 +30,19 @@ const gameEventsSubscriptionGql = gql`
   }
 `;
 
-type PropsType = {
-  gameId: string;
-};
+type PropsType = {};
 
 export function Game(props: PropsType) {
+  const { gameId } = useParams();
   const { data } = useQuery(gameQueryGql, {
-    variables: { id: props.gameId },
+    variables: { id: gameId },
   });
   const { error } = useSubscription(gameEventsSubscriptionGql, {
-    variables: { gameId: props.gameId },
+    variables: { gameId: gameId },
   });
   return (
     <div>
-      Game Id: {props.gameId}
+      Game Id: {gameId}
       <br />
       Name: {data?.game?.name}
       <br />
