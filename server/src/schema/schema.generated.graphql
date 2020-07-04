@@ -9,6 +9,11 @@ type Game implements Node {
   players: [Player!]!
 }
 
+type GameAndPlayer {
+  game: Game!
+  player: Player!
+}
+
 type GameEvent {
   changedNodes: [Node!]!
 }
@@ -19,7 +24,8 @@ type Mutation {
   """
   Creates a new player, adds the player to a game, and sets the player cookie.
   """
-  joinGameAsPlayer(gameId: ID!, name: String!): Game!
+  joinGameAsPlayer(gameId: ID!, name: String!): GameAndPlayer!
+  playerHeartbeat(gameId: ID!, playerId: ID!): Game!
   startGame(gameId: ID!): Game!
 }
 

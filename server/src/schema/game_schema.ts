@@ -27,6 +27,14 @@ export const GameGQL = schema.objectType({
   },
 });
 
+export const GameAndPlayerPayloadGQL = schema.objectType({
+  name: "GameAndPlayer",
+  definition(t) {
+    t.field("game", { type: GameGQL });
+    t.field("player", { type: PlayerGQL });
+  },
+});
+
 export const Query = schema.extendType({
   type: "Query",
   definition(t) {
@@ -62,7 +70,7 @@ export const Mutation = schema.extendType({
     });
 
     t.field("joinGameAsPlayer", {
-      type: GameGQL,
+      type: GameAndPlayerPayloadGQL,
       description:
         "Creates a new player, adds the player to a game, and sets the player cookie.",
       nullable: false,
@@ -78,8 +86,7 @@ export const Mutation = schema.extendType({
           action.playerJoin(player),
           ctx.redis
         );
-        ctx.response.cookie("player", player.id, { maxAge: 86400000 });
-        return game;
+        return { game, player };
       },
     });
 

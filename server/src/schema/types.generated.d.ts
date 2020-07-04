@@ -23,6 +23,10 @@ export interface NexusGenEnums {
 
 export interface NexusGenRootTypes {
   Game: Game;
+  GameAndPlayer: { // root type
+    game: NexusGenRootTypes['Game']; // Game!
+    player: NexusGenRootTypes['Player']; // Player!
+  }
   GameEvent: { // root type
     changedNodes: NexusGenRootTypes['Node'][]; // [Node!]!
   }
@@ -48,12 +52,17 @@ export interface NexusGenFieldTypes {
     numPlayers: number; // Int!
     players: NexusGenRootTypes['Player'][]; // [Player!]!
   }
+  GameAndPlayer: { // field return type
+    game: NexusGenRootTypes['Game']; // Game!
+    player: NexusGenRootTypes['Player']; // Player!
+  }
   GameEvent: { // field return type
     changedNodes: NexusGenRootTypes['Node'][]; // [Node!]!
   }
   Mutation: { // field return type
     createGame: NexusGenRootTypes['Game']; // Game!
-    joinGameAsPlayer: NexusGenRootTypes['Game']; // Game!
+    joinGameAsPlayer: NexusGenRootTypes['GameAndPlayer']; // GameAndPlayer!
+    playerHeartbeat: NexusGenRootTypes['Game']; // Game!
     startGame: NexusGenRootTypes['Game']; // Game!
   }
   Player: { // field return type
@@ -80,6 +89,10 @@ export interface NexusGenArgTypes {
       gameId: string; // ID!
       name: string; // String!
     }
+    playerHeartbeat: { // args
+      gameId: string; // ID!
+      playerId: string; // ID!
+    }
     startGame: { // args
       gameId: string; // ID!
     }
@@ -102,7 +115,7 @@ export interface NexusGenAbstractResolveReturnTypes {
 
 export interface NexusGenInheritedFields {}
 
-export type NexusGenObjectNames = "Game" | "GameEvent" | "Mutation" | "Player" | "Query" | "Subscription";
+export type NexusGenObjectNames = "Game" | "GameAndPlayer" | "GameEvent" | "Mutation" | "Player" | "Query" | "Subscription";
 
 export type NexusGenInputNames = never;
 
