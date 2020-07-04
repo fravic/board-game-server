@@ -7,6 +7,7 @@ import * as context from "../context"
 import { Game } from "../api/game"
 import { Node } from "../api/node"
 import { Player } from "../api/player"
+import { ExpectedAction } from "../api/action"
 
 
 
@@ -19,9 +20,11 @@ export interface NexusGenInputs {
 }
 
 export interface NexusGenEnums {
+  ActionType: "GameStart" | "Heartbeat" | "PlayerJoin"
 }
 
 export interface NexusGenRootTypes {
+  ExpectedAction: ExpectedAction;
   Game: Game;
   GameAndPlayer: { // root type
     game: NexusGenRootTypes['Game']; // Game!
@@ -43,10 +46,16 @@ export interface NexusGenRootTypes {
 }
 
 export interface NexusGenAllTypes extends NexusGenRootTypes {
+  ActionType: NexusGenEnums['ActionType'];
 }
 
 export interface NexusGenFieldTypes {
+  ExpectedAction: { // field return type
+    actorId: string | null; // String
+    type: NexusGenEnums['ActionType'] | null; // ActionType
+  }
   Game: { // field return type
+    expectedActions: NexusGenRootTypes['ExpectedAction'][]; // [ExpectedAction!]!
     id: string; // ID!
     name: string; // String!
     numPlayers: number; // Int!
@@ -96,6 +105,7 @@ export interface NexusGenArgTypes {
     }
     startGame: { // args
       gameId: string; // ID!
+      playerId: string; // ID!
     }
   }
   Query: {
@@ -116,11 +126,11 @@ export interface NexusGenAbstractResolveReturnTypes {
 
 export interface NexusGenInheritedFields {}
 
-export type NexusGenObjectNames = "Game" | "GameAndPlayer" | "GameEvent" | "Mutation" | "Player" | "Query" | "Subscription";
+export type NexusGenObjectNames = "ExpectedAction" | "Game" | "GameAndPlayer" | "GameEvent" | "Mutation" | "Player" | "Query" | "Subscription";
 
 export type NexusGenInputNames = never;
 
-export type NexusGenEnumNames = never;
+export type NexusGenEnumNames = "ActionType";
 
 export type NexusGenInterfaceNames = "Node";
 

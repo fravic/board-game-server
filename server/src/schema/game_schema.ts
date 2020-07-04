@@ -5,6 +5,7 @@ import * as gameApi from "../api/game";
 import * as playerApi from "../api/player";
 import { PlayerGQL } from "./player_schema";
 import { NodeGQL } from "./node_schema";
+import { ExpectedActionGQL } from "./action_schema";
 
 export const GameGQL = schema.objectType({
   name: "Game",
@@ -24,6 +25,7 @@ export const GameGQL = schema.objectType({
         return root.players;
       },
     });
+    t.list.field("expectedActions", { type: ExpectedActionGQL });
   },
 });
 
@@ -71,8 +73,7 @@ export const Mutation = schema.extendType({
 
     t.field("joinGameAsPlayer", {
       type: GameAndPlayerPayloadGQL,
-      description:
-        "Creates a new player, adds the player to a game, and sets the player cookie.",
+      description: "Creates a new player and adds the player to a game.",
       nullable: false,
       args: {
         gameId: schema.idArg({ required: true }),
@@ -84,6 +85,7 @@ export const Mutation = schema.extendType({
         const game = await gameApi.dispatchAction(
           gameId,
           action.playerJoin(player),
+          player.id,
           ctx.redis
         );
         return { game, player };
@@ -95,12 +97,14 @@ export const Mutation = schema.extendType({
       nullable: false,
       args: {
         gameId: schema.idArg({ required: true }),
+        playerId: schema.idArg({ required: true }),
       },
       async resolve(_root, args, ctx) {
         const { gameId } = args;
         return await gameApi.dispatchAction(
           gameId,
           action.gameStart(),
+          args.playerId,
           ctx.redis
         );
       },

@@ -2,7 +2,19 @@
 ### Do not make changes to this file directly
 
 
+enum ActionType {
+  GameStart
+  Heartbeat
+  PlayerJoin
+}
+
+type ExpectedAction {
+  actorId: String
+  type: ActionType
+}
+
 type Game implements Node {
+  expectedActions: [ExpectedAction!]!
   id: ID!
   name: String!
   numPlayers: Int!
@@ -21,12 +33,10 @@ type GameEvent {
 type Mutation {
   createGame(name: String): Game!
 
-  """
-  Creates a new player, adds the player to a game, and sets the player cookie.
-  """
+  """Creates a new player and adds the player to a game."""
   joinGameAsPlayer(gameId: ID!, name: String!): GameAndPlayer!
   playerHeartbeat(gameId: ID!, playerId: ID!): Game!
-  startGame(gameId: ID!): Game!
+  startGame(gameId: ID!, playerId: ID!): Game!
 }
 
 interface Node {

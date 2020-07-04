@@ -1,6 +1,13 @@
 import { Player } from "./player";
 
-export type ActionType = "PlayerJoin" | "GameStart" | "Heartbeat";
+export const actionType = ["PlayerJoin", "GameStart", "Heartbeat"] as const;
+
+export type ActionType = typeof actionType[number];
+
+export type ExpectedAction = {
+  type: ActionType;
+  actorId?: string;
+};
 
 export interface Action {
   type: ActionType;

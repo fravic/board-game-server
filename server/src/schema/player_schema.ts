@@ -30,6 +30,7 @@ export const Mutation = schema.extendType({
         const game = await gameApi.dispatchAction(
           args.gameId,
           action.heartbeat(args.playerId),
+          null,
           ctx.redis
         );
         gameApi.save(game, ctx.redis);
