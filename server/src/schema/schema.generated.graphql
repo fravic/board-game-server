@@ -35,6 +35,7 @@ interface Node {
 
 type Player implements Node {
   id: ID!
+  isConnected: Boolean!
   name: String!
 }
 

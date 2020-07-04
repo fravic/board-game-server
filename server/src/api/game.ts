@@ -1,11 +1,11 @@
 import { uniqBy } from "lodash";
 import { v4 as uuid } from "uuid";
 
-import { Action, PlayerJoinAction, HeartbeatAction, heartbeat } from "./action";
-import { Player } from "./player";
+import { Action, PlayerJoinAction } from "./action";
+import { Player, playerReducer } from "./player";
 import { Node } from "./node";
 import { Redis } from "../redis";
-import { EpochSeconds } from "./utils";
+import { EpochSeconds, Reducer, currentEpochSeconds } from "./utils";
 
 export interface Game extends Node {
   name: string;
@@ -24,7 +24,7 @@ export function create(fields: Pick<Game, "name"> & Partial<Game>): Game {
     gqlName: "Game",
     name,
     players: players ?? [],
-    lastUpdated: currentEpochMillis(),
+    lastUpdated: currentEpochSeconds(),
   };
 }
 
@@ -55,21 +55,10 @@ export async function dispatchAction(
   return game;
 }
 
-function currentEpochMillis(): EpochSeconds {
-  return Math.floor(new Date().getTime() / 1000);
-}
-
-type Reducer<ResultType> = (
-  prev: ResultType,
-  action: Action,
-  // Mutable array of Nodes that have changed (after state updates have been applied) to send to the client
-  clientUpdates: Array<Node>
-) => ResultType;
-
-const gameReducer: Reducer<Game> = (game, action, clientUpdates) => {
+export const gameReducer: Reducer<Game> = (game, action, clientUpdates) => {
   let next = {
     ...game,
-    lastUpdated: currentEpochMillis(),
+    lastUpdated: currentEpochSeconds(),
   };
   return _gameReducer(game, action, clientUpdates);
 };
@@ -87,19 +76,4 @@ const _gameReducer: Reducer<Game> = (game, action, clientUpdates) => {
     ...next,
     players: next.players.map((p) => playerReducer(p, action, clientUpdates)),
   };
-};
-
-const playerReducer: Reducer<Player> = (player, action, clientUpdates) => {
-  let next = player;
-  if (action.type === "Heartbeat") {
-    const heartbeatAction = action as HeartbeatAction;
-    if (heartbeatAction.playerId === player.id) {
-      const next = {
-        ...player,
-        lastHeartbeat: currentEpochMillis(),
-      };
-      clientUpdates.push(next);
-    }
-  }
-  return next;
 };

@@ -67,6 +67,7 @@ export interface NexusGenFieldTypes {
   }
   Player: { // field return type
     id: string; // ID!
+    isConnected: boolean; // Boolean!
     name: string; // String!
   }
   Query: { // field return type

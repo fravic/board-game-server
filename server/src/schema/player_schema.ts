@@ -12,6 +12,7 @@ export const PlayerGQL = schema.objectType({
     t.implements(NodeGQL);
     t.id("id");
     t.string("name");
+    t.boolean("isConnected");
   },
 });
 
