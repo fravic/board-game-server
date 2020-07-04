@@ -7,7 +7,6 @@ import { Redis } from "../redis";
 
 export interface Game extends Node {
   name: string;
-  numPlayers: number;
   players: Array<Player>;
 }
 
@@ -16,12 +15,11 @@ export type GameReducer = (
 ) => Promise<{ next: Game; changedNodes: Array<Node> }>;
 
 export function create(fields: Pick<Game, "name"> & Partial<Game>): Game {
-  const { id, name, numPlayers, players } = fields;
+  const { id, name, players } = fields;
   return {
     id: id ?? uuid(),
     gqlName: "Game",
     name,
-    numPlayers: numPlayers ?? 1,
     players: players ?? [],
   };
 }

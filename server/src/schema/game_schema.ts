@@ -2,6 +2,7 @@ import * as schema from "@nexus/schema";
 
 import * as action from "../api/action";
 import * as gameApi from "../api/game";
+import * as playerApi from "../api/player";
 import { PlayerGQL } from "./player_schema";
 import { NodeGQL } from "./node_schema";
 
@@ -12,7 +13,11 @@ export const GameGQL = schema.objectType({
     t.implements(NodeGQL);
     t.id("id");
     t.string("name");
-    t.int("numPlayers");
+    t.int("numPlayers", {
+      async resolve(root) {
+        return root.players.length;
+      },
+    });
     t.list.field("players", {
       type: PlayerGQL,
       async resolve(root, _args, _ctx) {
@@ -46,20 +51,20 @@ export const Mutation = schema.extendType({
       nullable: false,
       args: {
         name: schema.stringArg(),
-        numPlayers: schema.intArg({ required: true }),
       },
       async resolve(_root, args, ctx) {
         const game = gameApi.create({
           name: args.name || "No name",
-          numPlayers: args.numPlayers,
         });
         gameApi.save(game, ctx.redis);
         return game;
       },
     });
 
-    t.field("addPlayerToGame", {
+    t.field("joinGameAsPlayer", {
       type: GameGQL,
+      description:
+        "Creates a new player, adds the player to a game, and sets the player cookie.",
       nullable: false,
       args: {
         gameId: schema.idArg({ required: true }),
@@ -67,12 +72,14 @@ export const Mutation = schema.extendType({
       },
       async resolve(_root, args, ctx) {
         const { gameId } = args;
-        const player = { name: args.name };
-        return await gameApi.dispatchAction(
+        const player = playerApi.create({ name: args.name });
+        const game = await gameApi.dispatchAction(
           gameId,
           action.playerJoin(player),
           ctx.redis
         );
+        ctx.response.cookie("player", player.id, { maxAge: 86400000 });
+        return game;
       },
     });
 

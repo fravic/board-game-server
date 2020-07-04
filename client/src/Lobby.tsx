@@ -4,7 +4,7 @@ import React from "react";
 
 const createGameMutationGql = gql`
   mutation CreateGame($name: String!) {
-    createGame(name: $name, numPlayers: 2) {
+    createGame(name: $name) {
       id
     }
   }

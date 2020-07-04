@@ -52,11 +52,12 @@ export interface NexusGenFieldTypes {
     changedNodes: NexusGenRootTypes['Node'][]; // [Node!]!
   }
   Mutation: { // field return type
-    addPlayerToGame: NexusGenRootTypes['Game']; // Game!
     createGame: NexusGenRootTypes['Game']; // Game!
+    joinGameAsPlayer: NexusGenRootTypes['Game']; // Game!
     startGame: NexusGenRootTypes['Game']; // Game!
   }
   Player: { // field return type
+    id: string; // ID!
     name: string; // String!
   }
   Query: { // field return type
@@ -72,13 +73,12 @@ export interface NexusGenFieldTypes {
 
 export interface NexusGenArgTypes {
   Mutation: {
-    addPlayerToGame: { // args
-      gameId: string; // ID!
-      name: string; // String!
-    }
     createGame: { // args
       name?: string | null; // String
-      numPlayers: number; // Int!
+    }
+    joinGameAsPlayer: { // args
+      gameId: string; // ID!
+      name: string; // String!
     }
     startGame: { // args
       gameId: string; // ID!
@@ -97,7 +97,7 @@ export interface NexusGenArgTypes {
 }
 
 export interface NexusGenAbstractResolveReturnTypes {
-  Node: "Game"
+  Node: "Game" | "Player"
 }
 
 export interface NexusGenInheritedFields {}

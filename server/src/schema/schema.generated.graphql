@@ -14,8 +14,12 @@ type GameEvent {
 }
 
 type Mutation {
-  addPlayerToGame(gameId: ID!, name: String!): Game!
-  createGame(name: String, numPlayers: Int!): Game!
+  createGame(name: String): Game!
+
+  """
+  Creates a new player, adds the player to a game, and sets the player cookie.
+  """
+  joinGameAsPlayer(gameId: ID!, name: String!): Game!
   startGame(gameId: ID!): Game!
 }
 
@@ -23,7 +27,8 @@ interface Node {
   id: ID!
 }
 
-type Player {
+type Player implements Node {
+  id: ID!
   name: String!
 }
 
