@@ -1,8 +1,9 @@
+import { produce } from "immer";
 import { v4 as uuid } from "uuid";
 
 import { Node } from "./node";
-import { EpochSeconds, Reducer, currentEpochSeconds } from "./utils";
-import { HeartbeatAction } from "./action";
+import { EpochSeconds, currentEpochSeconds } from "./utils";
+import { HeartbeatAction, Action } from "./action";
 
 export interface Player extends Node {
   name: string;
@@ -23,31 +24,14 @@ export function create(fields: Pick<Player, "name"> & Partial<Player>): Player {
 
 const HEARTBEAT_TIMEOUT: EpochSeconds = 7000;
 
-export const playerReducer: Reducer<Player> = (
-  player,
-  action,
-  clientUpdates
-) => {
-  let next = player;
+export const playerReducer = produce((draft: Player, action: Action) => {
   const now = currentEpochSeconds();
   if (action.type === "Heartbeat") {
     const heartbeatAction = action as HeartbeatAction;
-    if (heartbeatAction.playerId === player.id) {
-      next = {
-        ...player,
-        lastHeartbeat: now,
-      };
-      clientUpdates.push(next);
+    if (heartbeatAction.playerId === draft.id) {
+      draft.lastHeartbeat = now;
     }
   }
-  const isConnected =
-    !!player.lastHeartbeat && now - player.lastHeartbeat < HEARTBEAT_TIMEOUT;
-  if (isConnected !== player.isConnected) {
-    next = {
-      ...next,
-      isConnected,
-    };
-    clientUpdates.push(next);
-  }
-  return next;
-};
+  draft.isConnected =
+    !!draft.lastHeartbeat && now - draft.lastHeartbeat < HEARTBEAT_TIMEOUT;
+});
