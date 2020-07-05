@@ -1,13 +1,14 @@
 import { makeSchema } from "@nexus/schema";
 import path from "path";
 
+import * as boardSchema from "./board_schema";
 import * as eventSchema from "./game_event_schema";
 import * as gameSchema from "./game_schema";
 import * as nodeSchema from "./node_schema";
 import * as playerSchema from "./player_schema";
 
 export const schema = makeSchema({
-  types: [eventSchema, gameSchema, nodeSchema, playerSchema],
+  types: [boardSchema, eventSchema, gameSchema, nodeSchema, playerSchema],
   typegenAutoConfig: {
     sources: [
       { source: path.join(__dirname, "../context.ts"), alias: "context" },

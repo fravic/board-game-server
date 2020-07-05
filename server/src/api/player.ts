@@ -6,6 +6,7 @@ import { EpochSeconds, currentEpochSeconds } from "./utils";
 import { HeartbeatAction, Action } from "./action";
 
 export interface Player extends Node {
+  gqlName: "Player";
   name: string;
   lastHeartbeat: EpochSeconds | null;
   isConnected: boolean;

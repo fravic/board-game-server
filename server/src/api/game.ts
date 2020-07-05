@@ -6,11 +6,14 @@ import { Action, PlayerJoinAction, ExpectedAction } from "./action";
 import { Player, playerReducer } from "./player";
 import { Node } from "./node";
 import { Redis } from "../redis";
+import * as boardApi from "./board";
 
 export interface Game extends Node {
+  gqlName: "Game";
   expectedActions: Array<ExpectedAction>;
   name: string;
   players: Array<Player>;
+  board: boardApi.Board;
 }
 
 export type GameReducer = (
@@ -25,6 +28,7 @@ export function create(fields: Pick<Game, "name"> & Partial<Game>): Game {
     id: id ?? uuid(),
     name,
     players: players ?? [],
+    board: boardApi.create(),
   };
 }
 
@@ -66,7 +70,9 @@ export async function dispatchAction(
   await save(game, redis);
   if (changedNodes.length) {
     await redis.pubsub.publish(gameId, JSON.stringify({ changedNodes }));
-    console.dir([action, game, changedNodes], { depth: null });
+    if (action.type !== "Heartbeat") {
+      console.dir([action, changedNodes], { depth: null });
+    }
   }
 
   return game;
@@ -104,9 +110,10 @@ export const gameReducer = produceWithPatches((draft: Game, action: Action) => {
   if (action.type === "PlayerJoin") {
     draft.players.push((action as PlayerJoinAction).player);
     if (draft.players.length === NUM_PLAYERS) {
-      draft.expectedActions = [{ type: "GameStart" }];
+      draft.expectedActions = [{ type: "DropPiece" }];
     }
   }
+  draft.board = boardApi.boardReducer(draft.board, action);
   draft.players.forEach(
     (player, idx) => (draft.players[idx] = playerReducer(player, action))
   );

@@ -3,9 +3,23 @@
 
 
 enum ActionType {
-  GameStart
+  DropPiece
   Heartbeat
   PlayerJoin
+}
+
+type Board implements Node {
+  columns: [BoardColumn!]!
+  id: ID!
+}
+
+type BoardColumn {
+  pieces: [BoardPiece!]!
+}
+
+type BoardPiece {
+  """The player who owns this piece, or null if the piece is not owned"""
+  playerId: String
 }
 
 type ExpectedAction {
@@ -14,6 +28,7 @@ type ExpectedAction {
 }
 
 type Game implements Node {
+  board: Board!
   expectedActions: [ExpectedAction!]!
   id: ID!
   name: String!
@@ -32,11 +47,11 @@ type GameEvent {
 
 type Mutation {
   createGame(name: String): Game!
+  dropPiece(column: Int!, gameId: ID!, playerId: ID!): Board!
   heartbeat(gameId: ID!, playerId: ID): Game!
 
   """Creates a new player and adds the player to a game."""
   joinGameAsPlayer(gameId: ID!, name: String!): GameAndPlayer!
-  startGame(gameId: ID!, playerId: ID!): Game!
 }
 
 interface Node {

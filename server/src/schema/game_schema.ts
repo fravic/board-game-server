@@ -6,6 +6,7 @@ import * as playerApi from "../api/player";
 import { PlayerGQL } from "./player_schema";
 import { NodeGQL } from "./node_schema";
 import { ExpectedActionGQL } from "./action_schema";
+import { BoardGQL } from "./board_schema";
 
 export const GameGQL = schema.objectType({
   name: "Game",
@@ -26,6 +27,7 @@ export const GameGQL = schema.objectType({
       },
     });
     t.list.field("expectedActions", { type: ExpectedActionGQL });
+    t.field("board", { type: BoardGQL });
   },
 });
 
@@ -89,24 +91,6 @@ export const Mutation = schema.extendType({
           ctx.redis
         );
         return { game, player };
-      },
-    });
-
-    t.field("startGame", {
-      type: GameGQL,
-      nullable: false,
-      args: {
-        gameId: schema.idArg({ required: true }),
-        playerId: schema.idArg({ required: true }),
-      },
-      async resolve(_root, args, ctx) {
-        const { gameId } = args;
-        return await gameApi.dispatchAction(
-          gameId,
-          action.gameStart(),
-          args.playerId,
-          ctx.redis
-        );
       },
     });
 

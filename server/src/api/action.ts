@@ -1,6 +1,6 @@
 import { Player } from "./player";
 
-export const actionType = ["PlayerJoin", "GameStart", "Heartbeat"] as const;
+export const actionType = ["Heartbeat", "PlayerJoin", "DropPiece"] as const;
 
 export type ActionType = typeof actionType[number];
 
@@ -11,10 +11,6 @@ export type ExpectedAction = {
 
 export interface Action {
   type: ActionType;
-}
-
-export function gameStart(): Action {
-  return { type: "GameStart" };
 }
 
 export interface HeartbeatAction extends Action {
@@ -33,4 +29,14 @@ export interface PlayerJoinAction extends Action {
 
 export function playerJoin(player: Player): PlayerJoinAction {
   return { type: "PlayerJoin", player };
+}
+
+export interface DropPieceAction extends Action {
+  playerId: string;
+  column: number;
+  type: "DropPiece";
+}
+
+export function dropPiece(playerId: string, column: number): DropPieceAction {
+  return { type: "DropPiece", playerId, column };
 }

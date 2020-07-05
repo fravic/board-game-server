@@ -4,6 +4,7 @@
  */
 
 import * as context from "../context"
+import { Board } from "../api/board"
 import { Game } from "../api/game"
 import { Node } from "../api/node"
 import { Player } from "../api/player"
@@ -20,10 +21,17 @@ export interface NexusGenInputs {
 }
 
 export interface NexusGenEnums {
-  ActionType: "GameStart" | "Heartbeat" | "PlayerJoin"
+  ActionType: "DropPiece" | "Heartbeat" | "PlayerJoin"
 }
 
 export interface NexusGenRootTypes {
+  Board: Board;
+  BoardColumn: { // root type
+    pieces: NexusGenRootTypes['BoardPiece'][]; // [BoardPiece!]!
+  }
+  BoardPiece: { // root type
+    playerId?: string | null; // String
+  }
   ExpectedAction: ExpectedAction;
   Game: Game;
   GameAndPlayer: { // root type
@@ -50,11 +58,22 @@ export interface NexusGenAllTypes extends NexusGenRootTypes {
 }
 
 export interface NexusGenFieldTypes {
+  Board: { // field return type
+    columns: NexusGenRootTypes['BoardColumn'][]; // [BoardColumn!]!
+    id: string; // ID!
+  }
+  BoardColumn: { // field return type
+    pieces: NexusGenRootTypes['BoardPiece'][]; // [BoardPiece!]!
+  }
+  BoardPiece: { // field return type
+    playerId: string | null; // String
+  }
   ExpectedAction: { // field return type
     actorId: string | null; // String
     type: NexusGenEnums['ActionType'] | null; // ActionType
   }
   Game: { // field return type
+    board: NexusGenRootTypes['Board']; // Board!
     expectedActions: NexusGenRootTypes['ExpectedAction'][]; // [ExpectedAction!]!
     id: string; // ID!
     name: string; // String!
@@ -70,9 +89,9 @@ export interface NexusGenFieldTypes {
   }
   Mutation: { // field return type
     createGame: NexusGenRootTypes['Game']; // Game!
+    dropPiece: NexusGenRootTypes['Board']; // Board!
     heartbeat: NexusGenRootTypes['Game']; // Game!
     joinGameAsPlayer: NexusGenRootTypes['GameAndPlayer']; // GameAndPlayer!
-    startGame: NexusGenRootTypes['Game']; // Game!
   }
   Player: { // field return type
     id: string; // ID!
@@ -95,6 +114,11 @@ export interface NexusGenArgTypes {
     createGame: { // args
       name?: string | null; // String
     }
+    dropPiece: { // args
+      column: number; // Int!
+      gameId: string; // ID!
+      playerId: string; // ID!
+    }
     heartbeat: { // args
       gameId: string; // ID!
       playerId?: string | null; // ID
@@ -102,10 +126,6 @@ export interface NexusGenArgTypes {
     joinGameAsPlayer: { // args
       gameId: string; // ID!
       name: string; // String!
-    }
-    startGame: { // args
-      gameId: string; // ID!
-      playerId: string; // ID!
     }
   }
   Query: {
@@ -121,12 +141,12 @@ export interface NexusGenArgTypes {
 }
 
 export interface NexusGenAbstractResolveReturnTypes {
-  Node: "Game" | "Player"
+  Node: "Game" | "Board" | "Player"
 }
 
 export interface NexusGenInheritedFields {}
 
-export type NexusGenObjectNames = "ExpectedAction" | "Game" | "GameAndPlayer" | "GameEvent" | "Mutation" | "Player" | "Query" | "Subscription";
+export type NexusGenObjectNames = "Board" | "BoardColumn" | "BoardPiece" | "ExpectedAction" | "Game" | "GameAndPlayer" | "GameEvent" | "Mutation" | "Player" | "Query" | "Subscription";
 
 export type NexusGenInputNames = never;
 
