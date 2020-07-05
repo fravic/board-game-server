@@ -11,6 +11,7 @@ export enum ActionType {
   DropPiece = "DropPiece",
   Heartbeat = "Heartbeat",
   PlayerJoin = "PlayerJoin",
+  ResetBoard = "ResetBoard",
 }
 
 //==============================================================

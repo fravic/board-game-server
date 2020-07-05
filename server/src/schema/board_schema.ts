@@ -58,5 +58,23 @@ export const Mutation = schema.extendType({
         return game.board;
       },
     });
+
+    t.field("resetBoard", {
+      type: BoardGQL,
+      nullable: false,
+      args: {
+        gameId: schema.idArg({ required: true }),
+      },
+      async resolve(_root, args, ctx) {
+        const { gameId } = args;
+        const game = await gameApi.dispatchAction(
+          gameId,
+          action.resetBoard(),
+          null,
+          ctx.redis
+        );
+        return game.board;
+      },
+    });
   },
 });

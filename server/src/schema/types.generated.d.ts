@@ -21,7 +21,7 @@ export interface NexusGenInputs {
 }
 
 export interface NexusGenEnums {
-  ActionType: "DropPiece" | "Heartbeat" | "PlayerJoin"
+  ActionType: "DropPiece" | "Heartbeat" | "PlayerJoin" | "ResetBoard"
 }
 
 export interface NexusGenRootTypes {
@@ -93,6 +93,7 @@ export interface NexusGenFieldTypes {
     dropPiece: NexusGenRootTypes['Board']; // Board!
     heartbeat: NexusGenRootTypes['Game']; // Game!
     joinGameAsPlayer: NexusGenRootTypes['GameAndPlayer']; // GameAndPlayer!
+    resetBoard: NexusGenRootTypes['Board']; // Board!
   }
   Player: { // field return type
     colorHex: string; // String!
@@ -128,6 +129,9 @@ export interface NexusGenArgTypes {
     joinGameAsPlayer: { // args
       gameId: string; // ID!
       name: string; // String!
+    }
+    resetBoard: { // args
+      gameId: string; // ID!
     }
   }
   Query: {

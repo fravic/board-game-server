@@ -2,7 +2,12 @@ import { enablePatches, produceWithPatches, Patch } from "immer";
 import { uniqBy } from "lodash";
 import { v4 as uuid } from "uuid";
 
-import { Action, PlayerJoinAction, ExpectedAction } from "./action";
+import {
+  Action,
+  PlayerJoinAction,
+  ExpectedAction,
+  DropPieceAction,
+} from "./action";
 import { Player, playerReducer } from "./player";
 import { Node } from "./node";
 import { Redis } from "../redis";
@@ -117,10 +122,33 @@ export const gameReducer = produceWithPatches((draft: Game, action: Action) => {
     };
     draft.players.push(player);
     if (draft.players.length === NUM_PLAYERS) {
-      draft.expectedActions = [{ type: "DropPiece" }];
+      draft.expectedActions = [
+        { type: "DropPiece", actorId: draft.players[0].id },
+      ];
     }
+  } else if (action.type === "DropPiece") {
+    const dropPieceAction = action as DropPieceAction;
+    draft.board = boardApi.boardReducer(draft.board, action);
+    if (draft.board.winningPlayerId) {
+      draft.expectedActions = [{ type: "ResetBoard" }];
+    } else {
+      const playerIdx = draft.players.findIndex(
+        (p) => p.id === dropPieceAction.playerId
+      );
+      draft.expectedActions = [
+        {
+          type: "DropPiece",
+          actorId: draft.players[(playerIdx + 1) % draft.players.length].id,
+        },
+      ];
+    }
+  } else if (action.type === "ResetBoard") {
+    draft.board = boardApi.boardReducer(draft.board, action);
+    draft.expectedActions = [
+      { type: "DropPiece", actorId: draft.players[0].id },
+    ];
   }
-  draft.board = boardApi.boardReducer(draft.board, action);
+
   draft.players.forEach(
     (player, idx) => (draft.players[idx] = playerReducer(player, action))
   );

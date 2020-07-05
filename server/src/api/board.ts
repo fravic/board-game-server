@@ -13,16 +13,18 @@ export interface Board extends Node {
 const COLUMNS = 7;
 const ROWS = 6;
 
+const DEFAULT_COLUMNS = Array(COLUMNS)
+  .fill(null)
+  .map((_) => ({
+    pieces: Array(ROWS).fill({ playerId: null }),
+  }));
+
 export function create(): Board {
   return {
     gqlName: "Board",
     id: uuid(),
     winningPlayerId: null,
-    columns: Array(COLUMNS)
-      .fill(null)
-      .map((_) => ({
-        pieces: Array(ROWS).fill({ playerId: null }),
-      })),
+    columns: DEFAULT_COLUMNS,
   };
 }
 
@@ -39,6 +41,9 @@ export const boardReducer = produce((draft: Board, action: Action) => {
         break;
       }
     }
+  } else if (action.type === "ResetBoard") {
+    draft.columns = DEFAULT_COLUMNS;
+    draft.winningPlayerId = null;
   }
 });
 

@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useSubscription } from "@apollo/react-hooks";
 import gql from "graphql-tag";
-import React, { useEffect } from "react";
+import React, { useEffect, useCallback } from "react";
 import { useParams } from "react-router-dom";
 
 import { Board } from "./Board";
@@ -78,6 +78,15 @@ export const heartbeatMutationGql = gql`
   }
 `;
 
+export const resetBoardMutationGql = gql`
+  mutation ResetBoard($gameId: ID!) {
+    resetBoard(gameId: $gameId) {
+      ...boardFragment
+    }
+  }
+  ${boardFragmentGql}
+`;
+
 type PropsType = {};
 
 export function Game(props: PropsType) {
@@ -114,6 +123,11 @@ export function Game(props: PropsType) {
     };
   }, [gameId, heartbeat, playerId]);
 
+  const [resetBoard] = useMutation(resetBoardMutationGql);
+  const handleResetBoardClick = useCallback(async () => {
+    await resetBoard({ variables: { gameId } });
+  }, [gameId, resetBoard]);
+
   return (
     <div>
       Game Id: {gameId}
@@ -143,7 +157,10 @@ export function Game(props: PropsType) {
         />
       )}
       {game?.board.winningPlayerId && (
-        <div>{game?.board.winningPlayerId} wins!</div>
+        <div>
+          {game?.board.winningPlayerId} wins!{" "}
+          <button onClick={handleResetBoardClick}>Play again</button>
+        </div>
       )}
       {error && error.toString()}
     </div>
