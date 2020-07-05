@@ -18,11 +18,11 @@ export function gameStart(): Action {
 }
 
 export interface HeartbeatAction extends Action {
-  playerId: string;
+  playerId: string | null;
   type: "Heartbeat";
 }
 
-export function heartbeat(playerId: string): HeartbeatAction {
+export function heartbeat(playerId: string | null): HeartbeatAction {
   return { type: "Heartbeat", playerId };
 }
 

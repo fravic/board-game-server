@@ -2,6 +2,7 @@ import { useMutation } from "@apollo/react-hooks";
 import gql from "graphql-tag";
 import React from "react";
 
+import { playerFragment as PlayerFragment } from "./gql_types/playerFragment";
 import {
   JoinGameAsPlayer,
   JoinGameAsPlayerVariables,
@@ -18,21 +19,21 @@ export const joinGameAsPlayerMutationGql = gql`
 `;
 
 type PropsType = {
+  acceptingNewPlayers: boolean;
+  disconnectedPlayers: Array<PlayerFragment>;
   gameId: string;
   onSetPlayerId: (playerId: string) => void;
 };
 
 export function JoinAsPlayerForm(props: PropsType) {
-  const [playerName, setPlayerName] = React.useState("");
   const [joinGameAsPlayer] = useMutation<
     JoinGameAsPlayer,
     JoinGameAsPlayerVariables
   >(joinGameAsPlayerMutationGql);
-  const handleJoinFormSubmit = React.useCallback(
-    async (e) => {
-      e.preventDefault();
+  const handleNewPlayerFormSubmit = React.useCallback(
+    async (name) => {
       const res = await joinGameAsPlayer({
-        variables: { gameId: props.gameId, name: playerName },
+        variables: { gameId: props.gameId, name },
       });
       const playerId = res.data?.joinGameAsPlayer.player.id;
       if (!playerId) {
@@ -40,10 +41,41 @@ export function JoinAsPlayerForm(props: PropsType) {
       }
       props.onSetPlayerId(playerId);
     },
-    [joinGameAsPlayer, props.gameId, playerName]
+    [joinGameAsPlayer, props]
   );
   return (
-    <form onSubmit={handleJoinFormSubmit}>
+    <>
+      {props.acceptingNewPlayers && (
+        <NewPlayerForm onSubmit={handleNewPlayerFormSubmit} />
+      )}
+      Or rejoin as:
+      {props.disconnectedPlayers.map((player) => (
+        <button
+          key={player.id}
+          onClick={() => {
+            props.onSetPlayerId(player.id);
+          }}
+        >
+          {player.name}
+        </button>
+      ))}
+    </>
+  );
+}
+
+type NewPlayerFormPropsType = {
+  onSubmit: (name: string) => Promise<any>;
+};
+
+function NewPlayerForm(props: NewPlayerFormPropsType) {
+  const [playerName, setPlayerName] = React.useState("");
+  return (
+    <form
+      onSubmit={(e) => {
+        e.preventDefault();
+        props.onSubmit(playerName);
+      }}
+    >
       Your name:
       <input
         value={playerName}

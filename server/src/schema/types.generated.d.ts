@@ -70,8 +70,8 @@ export interface NexusGenFieldTypes {
   }
   Mutation: { // field return type
     createGame: NexusGenRootTypes['Game']; // Game!
+    heartbeat: NexusGenRootTypes['Game']; // Game!
     joinGameAsPlayer: NexusGenRootTypes['GameAndPlayer']; // GameAndPlayer!
-    playerHeartbeat: NexusGenRootTypes['Game']; // Game!
     startGame: NexusGenRootTypes['Game']; // Game!
   }
   Player: { // field return type
@@ -95,13 +95,13 @@ export interface NexusGenArgTypes {
     createGame: { // args
       name?: string | null; // String
     }
+    heartbeat: { // args
+      gameId: string; // ID!
+      playerId?: string | null; // ID
+    }
     joinGameAsPlayer: { // args
       gameId: string; // ID!
       name: string; // String!
-    }
-    playerHeartbeat: { // args
-      gameId: string; // ID!
-      playerId: string; // ID!
     }
     startGame: { // args
       gameId: string; // ID!

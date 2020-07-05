@@ -13,6 +13,7 @@ export interface gameFragment_players {
   __typename: "Player";
   id: string;
   name: string;
+  isConnected: boolean;
 }
 
 export interface gameFragment_expectedActions {

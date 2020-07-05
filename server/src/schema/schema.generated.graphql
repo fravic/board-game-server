@@ -32,10 +32,10 @@ type GameEvent {
 
 type Mutation {
   createGame(name: String): Game!
+  heartbeat(gameId: ID!, playerId: ID): Game!
 
   """Creates a new player and adds the player to a game."""
   joinGameAsPlayer(gameId: ID!, name: String!): GameAndPlayer!
-  playerHeartbeat(gameId: ID!, playerId: ID!): Game!
   startGame(gameId: ID!, playerId: ID!): Game!
 }
 

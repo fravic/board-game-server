@@ -9,15 +9,11 @@ import { ActionType } from "./globalTypes";
 // GraphQL subscription operation: GameEvents
 // ====================================================
 
-export interface GameEvents_gameEvents_changedNodes_Player {
-  __typename: "Player";
-  id: string;
-}
-
 export interface GameEvents_gameEvents_changedNodes_Game_players {
   __typename: "Player";
   id: string;
   name: string;
+  isConnected: boolean;
 }
 
 export interface GameEvents_gameEvents_changedNodes_Game_expectedActions {
@@ -34,7 +30,14 @@ export interface GameEvents_gameEvents_changedNodes_Game {
   expectedActions: GameEvents_gameEvents_changedNodes_Game_expectedActions[];
 }
 
-export type GameEvents_gameEvents_changedNodes = GameEvents_gameEvents_changedNodes_Player | GameEvents_gameEvents_changedNodes_Game;
+export interface GameEvents_gameEvents_changedNodes_Player {
+  __typename: "Player";
+  id: string;
+  name: string;
+  isConnected: boolean;
+}
+
+export type GameEvents_gameEvents_changedNodes = GameEvents_gameEvents_changedNodes_Game | GameEvents_gameEvents_changedNodes_Player;
 
 export interface GameEvents_gameEvents {
   __typename: "GameEvent";

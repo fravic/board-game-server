@@ -15,27 +15,3 @@ export const PlayerGQL = schema.objectType({
     t.boolean("isConnected");
   },
 });
-
-export const Mutation = schema.extendType({
-  type: "Mutation",
-  definition(t) {
-    t.field("playerHeartbeat", {
-      type: GameGQL,
-      nullable: false,
-      args: {
-        gameId: schema.idArg({ required: true }),
-        playerId: schema.idArg({ required: true }),
-      },
-      async resolve(_root, args, ctx) {
-        const game = await gameApi.dispatchAction(
-          args.gameId,
-          action.heartbeat(args.playerId),
-          null,
-          ctx.redis
-        );
-        gameApi.save(game, ctx.redis);
-        return game;
-      },
-    });
-  },
-});

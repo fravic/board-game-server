@@ -109,5 +109,24 @@ export const Mutation = schema.extendType({
         );
       },
     });
+
+    t.field("heartbeat", {
+      type: GameGQL,
+      nullable: false,
+      args: {
+        gameId: schema.idArg({ required: true }),
+        playerId: schema.idArg(),
+      },
+      async resolve(_root, args, ctx) {
+        const game = await gameApi.dispatchAction(
+          args.gameId,
+          action.heartbeat(args.playerId || null),
+          null,
+          ctx.redis
+        );
+        gameApi.save(game, ctx.redis);
+        return game;
+      },
+    });
   },
 });

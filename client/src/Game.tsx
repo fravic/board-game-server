@@ -1,20 +1,28 @@
-import { useQuery, useSubscription } from "@apollo/react-hooks";
+import { useMutation, useQuery, useSubscription } from "@apollo/react-hooks";
 import gql from "graphql-tag";
-import React from "react";
+import React, { useEffect } from "react";
 import { useParams } from "react-router-dom";
 
 import { JoinAsPlayerForm } from "./JoinAsPlayerForm";
 
 import { Game as GameQuery } from "./gql_types/Game";
 import { GameEvents, GameEventsVariables } from "./gql_types/GameEvents";
+import { Heartbeat, HeartbeatVariables } from "./gql_types/Heartbeat";
+
+export const playerFragment = gql`
+  fragment playerFragment on Player {
+    id
+    name
+    isConnected
+  }
+`;
 
 export const gameFragment = gql`
   fragment gameFragment on Game {
     id
     name
     players {
-      id
-      name
+      ...playerFragment
     }
     expectedActions {
       type
@@ -30,6 +38,7 @@ export const gameQueryGql = gql`
     }
   }
   ${gameFragment}
+  ${playerFragment}
 `;
 
 export const gameEventsSubscriptionGql = gql`
@@ -40,10 +49,22 @@ export const gameEventsSubscriptionGql = gql`
         ... on Game {
           ...gameFragment
         }
+        ... on Player {
+          ...playerFragment
+        }
       }
     }
   }
   ${gameFragment}
+  ${playerFragment}
+`;
+
+export const heartbeatMutationGql = gql`
+  mutation Heartbeat($gameId: ID!, $playerId: ID) {
+    heartbeat(gameId: $gameId, playerId: $playerId) {
+      id
+    }
+  }
 `;
 
 type PropsType = {};
@@ -53,6 +74,8 @@ export function Game(props: PropsType) {
   const { data } = useQuery<GameQuery>(gameQueryGql, {
     variables: { id: gameId },
   });
+  const game = data?.game;
+
   const { error } = useSubscription<GameEvents, GameEventsVariables>(
     gameEventsSubscriptionGql,
     {
@@ -61,6 +84,24 @@ export function Game(props: PropsType) {
   );
 
   const [playerId, setPlayerId] = React.useState<string | null>(null);
+
+  const disconnectedPlayers = (game?.players || []).filter(
+    (p) => !p.isConnected
+  );
+
+  const [heartbeat] = useMutation<Heartbeat, HeartbeatVariables>(
+    heartbeatMutationGql
+  );
+  useEffect(() => {
+    const interval = setInterval(() => {
+      if (gameId) {
+        heartbeat({ variables: { playerId, gameId } });
+      }
+    }, 2500);
+    return () => {
+      clearInterval(interval);
+    };
+  }, [gameId, heartbeat, playerId]);
 
   return (
     <div>
@@ -71,7 +112,16 @@ export function Game(props: PropsType) {
       Players: {data?.game?.players.map((p: { name: string }) => p.name)}
       <br />
       {playerId === null && (
-        <JoinAsPlayerForm gameId={gameId} onSetPlayerId={setPlayerId} />
+        <JoinAsPlayerForm
+          gameId={gameId}
+          onSetPlayerId={setPlayerId}
+          disconnectedPlayers={disconnectedPlayers}
+          acceptingNewPlayers={Boolean(
+            game &&
+              game.expectedActions.length &&
+              game.expectedActions.find((ex) => ex.type === "PlayerJoin")
+          )}
+        />
       )}
       {error && error.toString()}
     </div>

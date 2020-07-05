@@ -13,6 +13,7 @@ export interface Game_game_players {
   __typename: "Player";
   id: string;
   name: string;
+  isConnected: boolean;
 }
 
 export interface Game_game_expectedActions {

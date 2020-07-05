@@ -22,7 +22,7 @@ export function create(fields: Pick<Player, "name"> & Partial<Player>): Player {
   };
 }
 
-const HEARTBEAT_TIMEOUT: EpochSeconds = 7000;
+const HEARTBEAT_TIMEOUT: EpochSeconds = 7;
 
 export const playerReducer = produce((draft: Player, action: Action) => {
   const now = currentEpochSeconds();

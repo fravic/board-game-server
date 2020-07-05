@@ -62,10 +62,12 @@ export async function dispatchAction(
     (n) => n.id
   );
 
-  // Publish the action
+  // Publish the action (if any Nodes changed)
   await save(game, redis);
-  await redis.pubsub.publish(gameId, JSON.stringify({ changedNodes }));
-  console.dir([action, game, changedNodes], { depth: null });
+  if (changedNodes.length) {
+    await redis.pubsub.publish(gameId, JSON.stringify({ changedNodes }));
+    console.dir([action, game, changedNodes], { depth: null });
+  }
 
   return game;
 }
