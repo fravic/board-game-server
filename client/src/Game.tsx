@@ -117,6 +117,8 @@ export function Game(props: PropsType) {
     heartbeatMutationGql
   );
   useEffect(() => {
+    heartbeat({ variables: { playerNum, gameId } });
+
     const interval = setInterval(() => {
       if (gameId) {
         heartbeat({ variables: { playerNum, gameId } });
