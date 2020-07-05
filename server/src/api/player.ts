@@ -23,8 +23,8 @@ export function create(
     key: `players.${playerNum}`,
     colorHex: "#000000",
     name,
-    lastHeartbeat: null,
-    isConnected: false,
+    lastHeartbeat: currentEpochSeconds(),
+    isConnected: true,
     playerNum,
   };
 }

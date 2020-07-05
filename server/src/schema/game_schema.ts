@@ -107,7 +107,7 @@ export const Mutation = schema.extendType({
       async resolve(_root, args, ctx) {
         const game = await gameApi.dispatchAction(
           args.gameId,
-          action.heartbeat(args.playerNum || null),
+          action.heartbeat(args.playerNum ?? null),
           null,
           ctx.redis
         );
