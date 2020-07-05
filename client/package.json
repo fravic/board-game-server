@@ -30,7 +30,7 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "generate-gql-types": "apollo codegen:generate --target=typescript --globalTypesFile=src/gql_types/globalTypes.ts gql_types"
+    "generate-gql-types": "apollo codegen:generate --target=typescript --globalTypesFile=src/gql_types/globalTypes.ts gql_types && graphql-codegen"
   },
   "eslintConfig": {
     "extends": "react-app"
@@ -48,6 +48,8 @@
     ]
   },
   "devDependencies": {
+    "@graphql-codegen/cli": "^1.16.0",
+    "@graphql-codegen/fragment-matcher": "^1.16.0",
     "prettier": "^2.0.5"
   }
 }

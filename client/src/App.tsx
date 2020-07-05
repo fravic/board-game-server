@@ -1,6 +1,9 @@
 import { ApolloProvider } from "@apollo/react-hooks";
 import { ApolloClient } from "apollo-client";
-import { InMemoryCache } from "apollo-cache-inmemory";
+import {
+  InMemoryCache,
+  IntrospectionFragmentMatcher,
+} from "apollo-cache-inmemory";
 import { SubscriptionClient } from "subscriptions-transport-ws";
 import { WebSocketLink } from "apollo-link-ws";
 import React from "react";
@@ -8,6 +11,7 @@ import { BrowserRouter, Route, Switch } from "react-router-dom";
 
 import { Game } from "./Game";
 import { Lobby } from "./Lobby";
+import introspectionQueryResultData from "./gql_types/fragmentTypes.json";
 
 const DEFAULT_ENDPOINT = "ws://localhost:4000";
 function createApolloLink(endpoint?: string) {
@@ -17,7 +21,10 @@ function createApolloLink(endpoint?: string) {
   return new WebSocketLink(client);
 }
 
-const cache = new InMemoryCache();
+const fragmentMatcher = new IntrospectionFragmentMatcher({
+  introspectionQueryResultData,
+});
+const cache = new InMemoryCache({ fragmentMatcher });
 
 const client = new ApolloClient({
   cache: cache,
