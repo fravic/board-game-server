@@ -7,6 +7,7 @@ import { Player, playerReducer } from "./player";
 import { Node } from "./node";
 import { Redis } from "../redis";
 import * as boardApi from "./board";
+import { randomColorHex } from "./utils";
 
 export interface Game extends Node {
   gqlName: "Game";
@@ -108,7 +109,13 @@ const NUM_PLAYERS = 2;
 enablePatches();
 export const gameReducer = produceWithPatches((draft: Game, action: Action) => {
   if (action.type === "PlayerJoin") {
-    draft.players.push((action as PlayerJoinAction).player);
+    const player = {
+      ...(action as PlayerJoinAction).player,
+      colorHex: randomColorHex(
+        draft.players[0] ? draft.players[0].colorHex : null
+      ),
+    };
+    draft.players.push(player);
     if (draft.players.length === NUM_PLAYERS) {
       draft.expectedActions = [{ type: "DropPiece" }];
     }

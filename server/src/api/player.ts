@@ -7,6 +7,7 @@ import { HeartbeatAction, Action } from "./action";
 
 export interface Player extends Node {
   gqlName: "Player";
+  colorHex: string;
   name: string;
   lastHeartbeat: EpochSeconds | null;
   isConnected: boolean;
@@ -17,6 +18,7 @@ export function create(fields: Pick<Player, "name"> & Partial<Player>): Player {
   return {
     id: id ?? uuid(),
     gqlName: "Player",
+    colorHex: "#000000",
     name,
     lastHeartbeat: null,
     isConnected: false,

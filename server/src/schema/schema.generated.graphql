@@ -62,6 +62,7 @@ interface Node {
 }
 
 type Player implements Node {
+  colorHex: String!
   id: ID!
   isConnected: Boolean!
   name: String!

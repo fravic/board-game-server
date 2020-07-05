@@ -8,7 +8,7 @@
 //==============================================================
 
 export enum ActionType {
-  GameStart = "GameStart",
+  DropPiece = "DropPiece",
   Heartbeat = "Heartbeat",
   PlayerJoin = "PlayerJoin",
 }

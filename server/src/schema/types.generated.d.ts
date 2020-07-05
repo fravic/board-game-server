@@ -95,6 +95,7 @@ export interface NexusGenFieldTypes {
     joinGameAsPlayer: NexusGenRootTypes['GameAndPlayer']; // GameAndPlayer!
   }
   Player: { // field return type
+    colorHex: string; // String!
     id: string; // ID!
     isConnected: boolean; // Boolean!
     name: string; // String!

@@ -12,4 +12,5 @@ export interface playerFragment {
   id: string;
   name: string;
   isConnected: boolean;
+  colorHex: string;
 }

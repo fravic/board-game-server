@@ -3,7 +3,9 @@ import gql from "graphql-tag";
 import React, { useEffect } from "react";
 import { useParams } from "react-router-dom";
 
+import { Board } from "./Board";
 import { JoinAsPlayerForm } from "./JoinAsPlayerForm";
+import { boardFragmentGql } from "./fragments";
 
 import { Game as GameQuery } from "./gql_types/Game";
 import { GameEvents, GameEventsVariables } from "./gql_types/GameEvents";
@@ -14,6 +16,7 @@ export const playerFragment = gql`
     id
     name
     isConnected
+    colorHex
   }
 `;
 
@@ -28,6 +31,9 @@ export const gameFragment = gql`
       type
       actorId
     }
+    board {
+      ...boardFragment
+    }
   }
 `;
 
@@ -39,6 +45,7 @@ export const gameQueryGql = gql`
   }
   ${gameFragment}
   ${playerFragment}
+  ${boardFragmentGql}
 `;
 
 export const gameEventsSubscriptionGql = gql`
@@ -52,11 +59,15 @@ export const gameEventsSubscriptionGql = gql`
         ... on Player {
           ...playerFragment
         }
+        ... on Board {
+          ...boardFragment
+        }
       }
     }
   }
   ${gameFragment}
   ${playerFragment}
+  ${boardFragmentGql}
 `;
 
 export const heartbeatMutationGql = gql`
@@ -109,7 +120,7 @@ export function Game(props: PropsType) {
       <br />
       Name: {data?.game?.name}
       <br />
-      Players: {data?.game?.players.map((p: { name: string }) => p.name)}
+      Players: {game?.players.map((p: { name: string }) => p.name)}
       <br />
       {playerId === null && (
         <JoinAsPlayerForm
@@ -122,6 +133,17 @@ export function Game(props: PropsType) {
               game.expectedActions.find((ex) => ex.type === "PlayerJoin")
           )}
         />
+      )}
+      {game?.board && (
+        <Board
+          board={game?.board}
+          currentPlayerId={playerId}
+          gameId={gameId}
+          players={game?.players}
+        />
+      )}
+      {game?.board.winningPlayerId && (
+        <div>{game?.board.winningPlayerId} wins!</div>
       )}
       {error && error.toString()}
     </div>
