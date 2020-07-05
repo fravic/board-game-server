@@ -3,43 +3,65 @@ import gql from "graphql-tag";
 import React from "react";
 import { useParams } from "react-router-dom";
 
-const gameQueryGql = gql`
-  query Game($id: ID!) {
-    game(id: $id) {
+import { JoinAsPlayerForm } from "./JoinAsPlayerForm";
+
+import { Game as GameQuery } from "./gql_types/Game";
+import { GameEvents, GameEventsVariables } from "./gql_types/GameEvents";
+
+export const gameFragment = gql`
+  fragment gameFragment on Game {
+    id
+    name
+    players {
       id
       name
-      players {
-        name
-      }
+    }
+    expectedActions {
+      type
+      actorId
     }
   }
 `;
 
-const gameEventsSubscriptionGql = gql`
+export const gameQueryGql = gql`
+  query Game($id: ID!) {
+    game(id: $id) {
+      ...gameFragment
+    }
+  }
+  ${gameFragment}
+`;
+
+export const gameEventsSubscriptionGql = gql`
   subscription GameEvents($gameId: ID!) {
     gameEvents(gameId: $gameId) {
       changedNodes {
         id
         ... on Game {
-          players {
-            name
-          }
+          ...gameFragment
         }
       }
     }
   }
+  ${gameFragment}
 `;
 
 type PropsType = {};
 
 export function Game(props: PropsType) {
   const { gameId } = useParams();
-  const { data } = useQuery(gameQueryGql, {
+  const { data } = useQuery<GameQuery>(gameQueryGql, {
     variables: { id: gameId },
   });
-  const { error } = useSubscription(gameEventsSubscriptionGql, {
-    variables: { gameId: gameId },
-  });
+  const { error } = useSubscription<GameEvents, GameEventsVariables>(
+    gameEventsSubscriptionGql,
+    {
+      variables: { gameId: gameId },
+    }
+  );
+
+  const [playerId, setPlayerId] = React.useState<string | null>(null);
+
   return (
     <div>
       Game Id: {gameId}
@@ -48,6 +70,9 @@ export function Game(props: PropsType) {
       <br />
       Players: {data?.game?.players.map((p: { name: string }) => p.name)}
       <br />
+      {playerId === null && (
+        <JoinAsPlayerForm gameId={gameId} onSetPlayerId={setPlayerId} />
+      )}
       {error && error.toString()}
     </div>
   );

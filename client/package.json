@@ -29,7 +29,8 @@
     "dev": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "generate-gql-types": "apollo codegen:generate --target=typescript --globalTypesFile=src/gql_types/globalTypes.ts gql_types"
   },
   "eslintConfig": {
     "extends": "react-app"
