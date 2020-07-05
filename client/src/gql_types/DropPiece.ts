@@ -22,7 +22,6 @@ export interface DropPiece_dropPiece_columns {
 
 export interface DropPiece_dropPiece {
   __typename: "Board";
-  gameId: string;
   key: string;
   columns: DropPiece_dropPiece_columns[];
   /**

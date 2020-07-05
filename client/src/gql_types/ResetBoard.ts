@@ -22,7 +22,6 @@ export interface ResetBoard_resetBoard_columns {
 
 export interface ResetBoard_resetBoard {
   __typename: "Board";
-  gameId: string;
   key: string;
   columns: ResetBoard_resetBoard_columns[];
   /**

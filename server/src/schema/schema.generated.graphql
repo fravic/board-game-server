@@ -28,7 +28,7 @@ type BoardPiece {
 }
 
 type ExpectedAction {
-  actorId: String
+  actorPlayerNum: Int
   type: ActionType
 }
 

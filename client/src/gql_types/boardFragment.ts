@@ -22,7 +22,6 @@ export interface boardFragment_columns {
 
 export interface boardFragment {
   __typename: "Board";
-  gameId: string;
   key: string;
   columns: boardFragment_columns[];
   /**

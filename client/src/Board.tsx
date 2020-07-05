@@ -23,19 +23,20 @@ export const dropPieceMutationGql = gql`
 type Props = {
   board: BoardFragment;
   currentPlayerNum: number | null;
+  isCurrentPlayerTurn: boolean;
   gameId: string;
   players: Array<PlayerFragment>;
 };
 
 export function Board(props: Props) {
-  const { board, currentPlayerNum, gameId } = props;
+  const { board, currentPlayerNum, gameId, isCurrentPlayerTurn } = props;
   const [dropPiece] = useMutation<DropPiece, DropPieceVariables>(
     dropPieceMutationGql
   );
   const handleClickDropPiece = useCallback(
     async (columnIdx: number) => {
       if (currentPlayerNum === null) {
-        throw new Error("Cannot drop piece, no player");
+        return;
       }
       await dropPiece({
         variables: {
@@ -53,6 +54,7 @@ export function Board(props: Props) {
         <BoardColumn
           column={col}
           columnIdx={idx}
+          clickable={isCurrentPlayerTurn}
           key={idx}
           onClickDropPiece={handleClickDropPiece}
           players={props.players}
@@ -63,6 +65,7 @@ export function Board(props: Props) {
 }
 
 type BoardColumnProps = {
+  clickable: boolean;
   column: BoardColumnFragment;
   columnIdx: number;
   onClickDropPiece: (columnIdx: number) => Promise<any>;
@@ -70,11 +73,15 @@ type BoardColumnProps = {
 };
 
 function BoardColumn(props: BoardColumnProps) {
-  const { column, columnIdx } = props;
+  const { clickable, column, columnIdx } = props;
   return (
     <div
-      onClick={() => props.onClickDropPiece(columnIdx)}
-      style={{ display: "flex", flexDirection: "column-reverse" }}
+      onClick={clickable ? () => props.onClickDropPiece(columnIdx) : undefined}
+      style={{
+        display: "flex",
+        flexDirection: "column-reverse",
+        boxShadow: clickable ? "0 0 3px rgba(0,255,0,0.5)" : "none",
+      }}
     >
       {column.pieces.map((piece, idx) => (
         <div

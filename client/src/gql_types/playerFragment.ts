@@ -9,7 +9,6 @@
 
 export interface playerFragment {
   __typename: "Player";
-  gameId: string;
   key: string;
   playerNum: number;
   name: string;

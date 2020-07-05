@@ -12,6 +12,6 @@ export const ExpectedActionGQL = schema.objectType({
   rootTyping: { path: "../api/action", name: "ExpectedAction" },
   definition(t) {
     t.field("type", { type: ActionTypeGQL, nullable: true });
-    t.string("actorId", { nullable: true });
+    t.int("actorPlayerNum", { nullable: true });
   },
 });

@@ -8,7 +8,7 @@ import { JoinAsPlayerForm } from "./JoinAsPlayerForm";
 import { boardFragmentGql } from "./fragments";
 import { isPlayerNum } from "./utils";
 
-import { Game as GameQuery } from "./gql_types/Game";
+import { Game as GameQuery, Game_game as GameFragment } from "./gql_types/Game";
 import { GameEvents, GameEventsVariables } from "./gql_types/GameEvents";
 import { Heartbeat, HeartbeatVariables } from "./gql_types/Heartbeat";
 
@@ -32,7 +32,7 @@ export const gameFragment = gql`
     }
     expectedActions {
       type
-      actorId
+      actorPlayerNum
     }
     board {
       ...boardFragment
@@ -157,6 +157,7 @@ export function Game(props: PropsType) {
           board={game?.board}
           currentPlayerNum={playerNum}
           gameId={gameId}
+          isCurrentPlayerTurn={isCurrentPlayerTurn(game, playerNum)}
           players={game?.players}
         />
       )}
@@ -168,5 +169,18 @@ export function Game(props: PropsType) {
       )}
       {error && error.toString()}
     </div>
+  );
+}
+
+function isCurrentPlayerTurn(
+  game: GameFragment | null | undefined,
+  playerNum: number | null
+): boolean {
+  return (
+    !!game &&
+    !!game.expectedActions.length &&
+    game.expectedActions.find(
+      (ex) => ex.type === "DropPiece" && ex.actorPlayerNum === playerNum
+    ) !== undefined
   );
 }

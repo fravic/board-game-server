@@ -71,7 +71,7 @@ export interface NexusGenFieldTypes {
     playerNum: number | null; // Int
   }
   ExpectedAction: { // field return type
-    actorId: string | null; // String
+    actorPlayerNum: number | null; // Int
     type: NexusGenEnums['ActionType'] | null; // ActionType
   }
   Game: { // field return type

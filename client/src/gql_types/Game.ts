@@ -11,7 +11,6 @@ import { ActionType } from "./globalTypes";
 
 export interface Game_game_players {
   __typename: "Player";
-  gameId: string;
   key: string;
   playerNum: number;
   name: string;
@@ -22,7 +21,7 @@ export interface Game_game_players {
 export interface Game_game_expectedActions {
   __typename: "ExpectedAction";
   type: ActionType | null;
-  actorId: string | null;
+  actorPlayerNum: string | null;
 }
 
 export interface Game_game_board_columns_pieces {
@@ -40,7 +39,6 @@ export interface Game_game_board_columns {
 
 export interface Game_game_board {
   __typename: "Board";
-  gameId: string;
   key: string;
   columns: Game_game_board_columns[];
   /**
@@ -53,6 +51,7 @@ export interface Game_game {
   __typename: "Game";
   gameId: string;
   name: string;
+  key: string;
   players: Game_game_players[];
   expectedActions: Game_game_expectedActions[];
   board: Game_game_board;

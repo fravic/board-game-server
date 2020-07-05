@@ -11,7 +11,6 @@ import { ActionType } from "./globalTypes";
 
 export interface GameEvents_gameEvents_changed_Game_players {
   __typename: "Player";
-  gameId: string;
   key: string;
   playerNum: number;
   name: string;
@@ -22,7 +21,7 @@ export interface GameEvents_gameEvents_changed_Game_players {
 export interface GameEvents_gameEvents_changed_Game_expectedActions {
   __typename: "ExpectedAction";
   type: ActionType | null;
-  actorId: string | null;
+  actorPlayerNum: string | null;
 }
 
 export interface GameEvents_gameEvents_changed_Game_board_columns_pieces {
@@ -40,7 +39,6 @@ export interface GameEvents_gameEvents_changed_Game_board_columns {
 
 export interface GameEvents_gameEvents_changed_Game_board {
   __typename: "Board";
-  gameId: string;
   key: string;
   columns: GameEvents_gameEvents_changed_Game_board_columns[];
   /**
