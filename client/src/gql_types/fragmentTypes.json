@@ -3,7 +3,7 @@
     "types": [
       {
         "kind": "INTERFACE",
-        "name": "Node",
+        "name": "GameObject",
         "possibleTypes": [
           {
             "name": "Board"

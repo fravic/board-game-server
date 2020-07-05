@@ -9,7 +9,7 @@
 
 export interface CreateGame_createGame {
   __typename: "Game";
-  id: string;
+  gameId: string;
 }
 
 export interface CreateGame {

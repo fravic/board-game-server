@@ -2,12 +2,12 @@ import gql from "graphql-tag";
 
 export const boardFragmentGql = gql`
   fragment boardFragment on Board {
-    id
+    key
     columns {
       pieces {
-        playerId
+        playerNum
       }
     }
-    winningPlayerId
+    winningPlayerNum
   }
 `;

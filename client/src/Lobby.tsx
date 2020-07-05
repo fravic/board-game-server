@@ -8,7 +8,7 @@ import { CreateGame, CreateGameVariables } from "./gql_types/CreateGame";
 const createGameMutationGql = gql`
   mutation CreateGame($name: String!) {
     createGame(name: $name) {
-      id
+      gameId
     }
   }
 `;
@@ -25,7 +25,7 @@ export function Lobby(props: PropsType) {
     async (e) => {
       e.preventDefault();
       const res = await createGame({ variables: { name: gameName } });
-      history.push(`/game/${res.data?.createGame.id}`);
+      history.push(`/game/${res.data?.createGame.gameId}`);
     },
     [createGame, gameName, history]
   );

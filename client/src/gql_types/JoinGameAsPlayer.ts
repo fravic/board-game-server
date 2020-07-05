@@ -9,7 +9,7 @@
 
 export interface JoinGameAsPlayer_joinGameAsPlayer_player {
   __typename: "Player";
-  id: string;
+  playerNum: number;
 }
 
 export interface JoinGameAsPlayer_joinGameAsPlayer {

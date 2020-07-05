@@ -11,7 +11,9 @@ import { ActionType } from "./globalTypes";
 
 export interface gameFragment_players {
   __typename: "Player";
-  id: string;
+  gameId: string;
+  key: string;
+  playerNum: number;
   name: string;
   isConnected: boolean;
   colorHex: string;
@@ -28,7 +30,7 @@ export interface gameFragment_board_columns_pieces {
   /**
    * The player who owns this piece, or null if the piece is not owned
    */
-  playerId: string | null;
+  playerNum: number | null;
 }
 
 export interface gameFragment_board_columns {
@@ -38,17 +40,18 @@ export interface gameFragment_board_columns {
 
 export interface gameFragment_board {
   __typename: "Board";
-  id: string;
+  gameId: string;
+  key: string;
   columns: gameFragment_board_columns[];
   /**
    * If set, the id of the player who has won the game.
    */
-  winningPlayerId: string | null;
+  winningPlayerNum: number | null;
 }
 
 export interface gameFragment {
   __typename: "Game";
-  id: string;
+  gameId: string;
   name: string;
   players: gameFragment_players[];
   expectedActions: gameFragment_expectedActions[];

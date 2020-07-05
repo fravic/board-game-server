@@ -4,7 +4,7 @@ import path from "path";
 import * as boardSchema from "./board_schema";
 import * as eventSchema from "./game_event_schema";
 import * as gameSchema from "./game_schema";
-import * as nodeSchema from "./node_schema";
+import * as nodeSchema from "./game_object_schema";
 import * as playerSchema from "./player_schema";
 
 export const schema = makeSchema({

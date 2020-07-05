@@ -4,7 +4,7 @@ import * as action from "../api/action";
 import * as gameApi from "../api/game";
 import * as playerApi from "../api/player";
 import { PlayerGQL } from "./player_schema";
-import { NodeGQL } from "./node_schema";
+import { GameObjectGQL } from "./game_object_schema";
 import { ExpectedActionGQL } from "./action_schema";
 import { BoardGQL } from "./board_schema";
 
@@ -12,8 +12,9 @@ export const GameGQL = schema.objectType({
   name: "Game",
   rootTyping: { path: "../api/game", name: "Game" },
   definition(t) {
-    t.implements(NodeGQL);
-    t.id("id");
+    t.implements(GameObjectGQL);
+    t.id("gameId");
+    t.string("key");
     t.string("name");
     t.int("numPlayers", {
       async resolve(root) {
@@ -48,7 +49,7 @@ export const Query = schema.extendType({
         id: schema.idArg({ required: true }),
       },
       async resolve(_root, args, ctx) {
-        const game = await gameApi.fetch(ctx.redis, args.id);
+        const game = await gameApi.fetch(args.id, ctx.redis);
         return game || null;
       },
     });
@@ -83,11 +84,13 @@ export const Mutation = schema.extendType({
       },
       async resolve(_root, args, ctx) {
         const { gameId } = args;
-        const player = playerApi.create({ name: args.name });
-        const game = await gameApi.dispatchAction(
+        const game = await gameApi.fetch(gameId, ctx.redis);
+        const playerNum = game.players.length;
+        const player = playerApi.create({ name: args.name, playerNum, gameId });
+        await gameApi.dispatchAction(
           gameId,
           action.playerJoin(player),
-          player.id,
+          playerNum,
           ctx.redis
         );
         return { game, player };
@@ -99,12 +102,12 @@ export const Mutation = schema.extendType({
       nullable: false,
       args: {
         gameId: schema.idArg({ required: true }),
-        playerId: schema.idArg(),
+        playerNum: schema.intArg(),
       },
       async resolve(_root, args, ctx) {
         const game = await gameApi.dispatchAction(
           args.gameId,
-          action.heartbeat(args.playerId || null),
+          action.heartbeat(args.playerNum || null),
           null,
           ctx.redis
         );

@@ -6,6 +6,7 @@ import { useParams } from "react-router-dom";
 import { Board } from "./Board";
 import { JoinAsPlayerForm } from "./JoinAsPlayerForm";
 import { boardFragmentGql } from "./fragments";
+import { isPlayerNum } from "./utils";
 
 import { Game as GameQuery } from "./gql_types/Game";
 import { GameEvents, GameEventsVariables } from "./gql_types/GameEvents";
@@ -13,7 +14,8 @@ import { Heartbeat, HeartbeatVariables } from "./gql_types/Heartbeat";
 
 export const playerFragment = gql`
   fragment playerFragment on Player {
-    id
+    key
+    playerNum
     name
     isConnected
     colorHex
@@ -22,8 +24,9 @@ export const playerFragment = gql`
 
 export const gameFragment = gql`
   fragment gameFragment on Game {
-    id
+    gameId
     name
+    key
     players {
       ...playerFragment
     }
@@ -51,8 +54,9 @@ export const gameQueryGql = gql`
 export const gameEventsSubscriptionGql = gql`
   subscription GameEvents($gameId: ID!) {
     gameEvents(gameId: $gameId) {
-      changedNodes {
-        id
+      changed {
+        gameId
+        key
         ... on Game {
           ...gameFragment
         }
@@ -71,9 +75,9 @@ export const gameEventsSubscriptionGql = gql`
 `;
 
 export const heartbeatMutationGql = gql`
-  mutation Heartbeat($gameId: ID!, $playerId: ID) {
-    heartbeat(gameId: $gameId, playerId: $playerId) {
-      id
+  mutation Heartbeat($gameId: ID!, $playerNum: Int) {
+    heartbeat(gameId: $gameId, playerNum: $playerNum) {
+      gameId
     }
   }
 `;
@@ -103,7 +107,7 @@ export function Game(props: PropsType) {
     }
   );
 
-  const [playerId, setPlayerId] = React.useState<string | null>(null);
+  const [playerNum, setPlayerNum] = React.useState<number | null>(null);
 
   const disconnectedPlayers = (game?.players || []).filter(
     (p) => !p.isConnected
@@ -115,13 +119,13 @@ export function Game(props: PropsType) {
   useEffect(() => {
     const interval = setInterval(() => {
       if (gameId) {
-        heartbeat({ variables: { playerId, gameId } });
+        heartbeat({ variables: { playerNum, gameId } });
       }
     }, 2500);
     return () => {
       clearInterval(interval);
     };
-  }, [gameId, heartbeat, playerId]);
+  }, [gameId, heartbeat, playerNum]);
 
   const [resetBoard] = useMutation(resetBoardMutationGql);
   const handleResetBoardClick = useCallback(async () => {
@@ -136,10 +140,10 @@ export function Game(props: PropsType) {
       <br />
       Players: {game?.players.map((p: { name: string }) => p.name)}
       <br />
-      {playerId === null && (
+      {playerNum === null && (
         <JoinAsPlayerForm
           gameId={gameId}
-          onSetPlayerId={setPlayerId}
+          onSetPlayerNum={setPlayerNum}
           disconnectedPlayers={disconnectedPlayers}
           acceptingNewPlayers={Boolean(
             game &&
@@ -151,14 +155,14 @@ export function Game(props: PropsType) {
       {game?.board && (
         <Board
           board={game?.board}
-          currentPlayerId={playerId}
+          currentPlayerNum={playerNum}
           gameId={gameId}
           players={game?.players}
         />
       )}
-      {game?.board.winningPlayerId && (
+      {isPlayerNum(game?.board.winningPlayerNum) && (
         <div>
-          {game?.board.winningPlayerId} wins!{" "}
+          {game?.board.winningPlayerNum} wins!{" "}
           <button onClick={handleResetBoardClick}>Play again</button>
         </div>
       )}

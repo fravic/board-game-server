@@ -11,7 +11,7 @@ export type ActionType = typeof actionType[number];
 
 export type ExpectedAction = {
   type: ActionType;
-  actorId?: string;
+  actorPlayerNum?: number;
 };
 
 export interface Action {
@@ -19,12 +19,12 @@ export interface Action {
 }
 
 export interface HeartbeatAction extends Action {
-  playerId: string | null;
+  playerNum: number | null;
   type: "Heartbeat";
 }
 
-export function heartbeat(playerId: string | null): HeartbeatAction {
-  return { type: "Heartbeat", playerId };
+export function heartbeat(playerNum: number | null): HeartbeatAction {
+  return { type: "Heartbeat", playerNum };
 }
 
 export interface PlayerJoinAction extends Action {
@@ -37,13 +37,13 @@ export function playerJoin(player: Player): PlayerJoinAction {
 }
 
 export interface DropPieceAction extends Action {
-  playerId: string;
+  playerNum: number;
   column: number;
   type: "DropPiece";
 }
 
-export function dropPiece(playerId: string, column: number): DropPieceAction {
-  return { type: "DropPiece", playerId, column };
+export function dropPiece(playerNum: number, column: number): DropPieceAction {
+  return { type: "DropPiece", playerNum, column };
 }
 
 export function resetBoard(): Action {

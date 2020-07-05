@@ -12,7 +12,7 @@ export interface DropPiece_dropPiece_columns_pieces {
   /**
    * The player who owns this piece, or null if the piece is not owned
    */
-  playerId: string | null;
+  playerNum: number | null;
 }
 
 export interface DropPiece_dropPiece_columns {
@@ -22,12 +22,13 @@ export interface DropPiece_dropPiece_columns {
 
 export interface DropPiece_dropPiece {
   __typename: "Board";
-  id: string;
+  gameId: string;
+  key: string;
   columns: DropPiece_dropPiece_columns[];
   /**
    * If set, the id of the player who has won the game.
    */
-  winningPlayerId: string | null;
+  winningPlayerNum: number | null;
 }
 
 export interface DropPiece {
@@ -36,6 +37,6 @@ export interface DropPiece {
 
 export interface DropPieceVariables {
   gameId: string;
-  playerId: string;
+  playerNum: number;
   column: number;
 }

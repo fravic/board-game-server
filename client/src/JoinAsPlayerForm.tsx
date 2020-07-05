@@ -12,7 +12,7 @@ export const joinGameAsPlayerMutationGql = gql`
   mutation JoinGameAsPlayer($gameId: ID!, $name: String!) {
     joinGameAsPlayer(gameId: $gameId, name: $name) {
       player {
-        id
+        playerNum
       }
     }
   }
@@ -22,7 +22,7 @@ type PropsType = {
   acceptingNewPlayers: boolean;
   disconnectedPlayers: Array<PlayerFragment>;
   gameId: string;
-  onSetPlayerId: (playerId: string) => void;
+  onSetPlayerNum: (playerNum: number) => void;
 };
 
 export function JoinAsPlayerForm(props: PropsType) {
@@ -35,11 +35,11 @@ export function JoinAsPlayerForm(props: PropsType) {
       const res = await joinGameAsPlayer({
         variables: { gameId: props.gameId, name },
       });
-      const playerId = res.data?.joinGameAsPlayer.player.id;
-      if (!playerId) {
-        throw new Error("Error getting playerId from server");
+      const playerNum = res.data?.joinGameAsPlayer.player.playerNum;
+      if (playerNum === undefined) {
+        throw new Error("Error getting playerNum from server");
       }
-      props.onSetPlayerId(playerId);
+      props.onSetPlayerNum(playerNum);
     },
     [joinGameAsPlayer, props]
   );
@@ -51,9 +51,9 @@ export function JoinAsPlayerForm(props: PropsType) {
       Or rejoin as:
       {props.disconnectedPlayers.map((player) => (
         <button
-          key={player.id}
+          key={player.playerNum}
           onClick={() => {
-            props.onSetPlayerId(player.id);
+            props.onSetPlayerNum(player.playerNum);
           }}
         >
           {player.name}

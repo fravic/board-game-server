@@ -9,7 +9,7 @@
 
 export interface Heartbeat_heartbeat {
   __typename: "Game";
-  id: string;
+  gameId: string;
 }
 
 export interface Heartbeat {
@@ -18,5 +18,5 @@ export interface Heartbeat {
 
 export interface HeartbeatVariables {
   gameId: string;
-  playerId?: string | null;
+  playerNum?: number | null;
 }

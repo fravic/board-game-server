@@ -9,12 +9,13 @@ enum ActionType {
   ResetBoard
 }
 
-type Board implements Node {
+type Board implements GameObject {
   columns: [BoardColumn!]!
-  id: ID!
+  gameId: ID!
+  key: String!
 
   """If set, the id of the player who has won the game."""
-  winningPlayerId: ID
+  winningPlayerNum: Int
 }
 
 type BoardColumn {
@@ -23,7 +24,7 @@ type BoardColumn {
 
 type BoardPiece {
   """The player who owns this piece, or null if the piece is not owned"""
-  playerId: String
+  playerNum: Int
 }
 
 type ExpectedAction {
@@ -31,10 +32,11 @@ type ExpectedAction {
   type: ActionType
 }
 
-type Game implements Node {
+type Game implements GameObject {
   board: Board!
   expectedActions: [ExpectedAction!]!
-  id: ID!
+  gameId: ID!
+  key: String!
   name: String!
   numPlayers: Int!
   players: [Player!]!
@@ -46,28 +48,31 @@ type GameAndPlayer {
 }
 
 type GameEvent {
-  changedNodes: [Node!]!
+  changed: [GameObject!]!
+}
+
+interface GameObject {
+  gameId: ID!
+  key: String!
 }
 
 type Mutation {
   createGame(name: String): Game!
-  dropPiece(column: Int!, gameId: ID!, playerId: ID!): Board!
-  heartbeat(gameId: ID!, playerId: ID): Game!
+  dropPiece(column: Int!, gameId: ID!, playerNum: Int!): Board!
+  heartbeat(gameId: ID!, playerNum: Int): Game!
 
   """Creates a new player and adds the player to a game."""
   joinGameAsPlayer(gameId: ID!, name: String!): GameAndPlayer!
   resetBoard(gameId: ID!): Board!
 }
 
-interface Node {
-  id: ID!
-}
-
-type Player implements Node {
+type Player implements GameObject {
   colorHex: String!
-  id: ID!
+  gameId: ID!
   isConnected: Boolean!
+  key: String!
   name: String!
+  playerNum: Int!
 }
 
 type Query {

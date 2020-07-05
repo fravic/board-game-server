@@ -12,7 +12,7 @@ export interface ResetBoard_resetBoard_columns_pieces {
   /**
    * The player who owns this piece, or null if the piece is not owned
    */
-  playerId: string | null;
+  playerNum: number | null;
 }
 
 export interface ResetBoard_resetBoard_columns {
@@ -22,12 +22,13 @@ export interface ResetBoard_resetBoard_columns {
 
 export interface ResetBoard_resetBoard {
   __typename: "Board";
-  id: string;
+  gameId: string;
+  key: string;
   columns: ResetBoard_resetBoard_columns[];
   /**
    * If set, the id of the player who has won the game.
    */
-  winningPlayerId: string | null;
+  winningPlayerNum: number | null;
 }
 
 export interface ResetBoard {

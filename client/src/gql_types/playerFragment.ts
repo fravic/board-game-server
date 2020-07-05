@@ -9,7 +9,9 @@
 
 export interface playerFragment {
   __typename: "Player";
-  id: string;
+  gameId: string;
+  key: string;
+  playerNum: number;
   name: string;
   isConnected: boolean;
   colorHex: string;

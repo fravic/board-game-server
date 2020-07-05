@@ -1,11 +1,11 @@
 import { objectType, subscriptionField, idArg } from "@nexus/schema";
 
-import { NodeGQL } from "./node_schema";
+import { GameObjectGQL } from "./game_object_schema";
 
 export const GameEventGQL = objectType({
   name: "GameEvent",
   definition(t) {
-    t.list.field("changedNodes", { type: NodeGQL });
+    t.list.field("changed", { type: GameObjectGQL });
   },
 });
 

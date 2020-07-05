@@ -12,7 +12,7 @@ export interface boardFragment_columns_pieces {
   /**
    * The player who owns this piece, or null if the piece is not owned
    */
-  playerId: string | null;
+  playerNum: number | null;
 }
 
 export interface boardFragment_columns {
@@ -22,10 +22,11 @@ export interface boardFragment_columns {
 
 export interface boardFragment {
   __typename: "Board";
-  id: string;
+  gameId: string;
+  key: string;
   columns: boardFragment_columns[];
   /**
    * If set, the id of the player who has won the game.
    */
-  winningPlayerId: string | null;
+  winningPlayerNum: number | null;
 }

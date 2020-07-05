@@ -9,12 +9,12 @@ import {
   DropPieceAction,
 } from "./action";
 import { Player, playerReducer } from "./player";
-import { Node } from "./node";
+import { GameObject } from "./game_object";
 import { Redis } from "../redis";
 import * as boardApi from "./board";
 import { randomColorHex } from "./utils";
 
-export interface Game extends Node {
+export interface Game extends GameObject {
   gqlName: "Game";
   expectedActions: Array<ExpectedAction>;
   name: string;
@@ -22,62 +22,63 @@ export interface Game extends Node {
   board: boardApi.Board;
 }
 
-export type GameReducer = (
-  prev: Game
-) => Promise<{ next: Game; changedNodes: Array<Node> }>;
-
 export function create(fields: Pick<Game, "name"> & Partial<Game>): Game {
-  const { id, name, players } = fields;
+  const { name, players } = fields;
+  const gameId = fields.gameId ?? uuid();
   return {
     expectedActions: [{ type: "PlayerJoin" }],
     gqlName: "Game",
-    id: id ?? uuid(),
+    gameId,
+    key: "game",
     name,
     players: players ?? [],
-    board: boardApi.create(),
+    board: boardApi.create(gameId),
   };
 }
 
-export async function fetch(redis: Redis, id: string): Promise<Game> {
+export async function fetch(id: string, redis: Redis): Promise<Game> {
   return JSON.parse(await redis.get(id));
 }
 
 export async function save(game: Game, redis: Redis): Promise<Game> {
-  await redis.set(game.id, JSON.stringify(game));
+  await redis.set(game.gameId, JSON.stringify(game));
   return game;
 }
 
 export async function dispatchAction(
   gameId: string,
   action: Action,
-  actorId: string | null,
+  actorPlayerNum: number | null,
   redis: Redis
 ): Promise<Game> {
-  const fetchedGame = await fetch(redis, gameId);
+  const fetchedGame = await fetch(gameId, redis);
 
   // Validate the action
   if (
     fetchedGame.expectedActions.find((ex) =>
-      isActionExpected(action, actorId, ex)
+      isActionExpected(action, actorPlayerNum, ex)
     ) === undefined
   ) {
+    console.error(
+      "Received unexpected action",
+      JSON.stringify(action, null, 2),
+      "expected",
+      JSON.stringify(fetchedGame.expectedActions, null, 2)
+    );
     throw new Error(`Received unexpected action of type: ${action.type}`);
   }
 
   // Perform the action
   const [game, patches] = gameReducer(fetchedGame, action);
-  // Note: changedNodes is shallow; only accounts for one level of nodes under Game
-  const changedNodes = uniqBy(
-    patches.map(getChangedNodeFromPatch(game)),
-    (n) => n.id
-  );
+  // Note: changed array is shallow; only accounts for one level of GameObjects under Game
+  const changed = uniqBy(patches.map(getChangedFromPatch(game)), (n) => n.id);
 
   // Publish the action (if any Nodes changed)
   await save(game, redis);
-  if (changedNodes.length) {
-    await redis.pubsub.publish(gameId, JSON.stringify({ changedNodes }));
+  if (changed.length) {
+    await redis.pubsub.publish(gameId, JSON.stringify({ changed }));
     if (action.type !== "Heartbeat") {
-      console.dir([action, changedNodes], { depth: null });
+      console.dir([action, changed], { depth: null });
     }
   }
 
@@ -86,7 +87,7 @@ export async function dispatchAction(
 
 const isActionExpected = (
   action: Action,
-  actorId: string | null,
+  actorPlayerNum: number | null,
   expectedAction: ExpectedAction
 ): boolean => {
   if (action.type === "Heartbeat") {
@@ -95,13 +96,14 @@ const isActionExpected = (
   // This logic may become more complex later (eg. with action categories)
   return (
     action.type === expectedAction.type &&
-    (!expectedAction.actorId || actorId === expectedAction.actorId)
+    (expectedAction.actorPlayerNum === undefined ||
+      actorPlayerNum === expectedAction.actorPlayerNum)
   );
 };
 
-const getChangedNodeFromPatch = (game: Game) => (patch: Patch) => {
+const getChangedFromPatch = (game: Game) => (patch: Patch) => {
   if (patch.op === "replace" && patch.value.id) {
-    // If a replace operation was done with a value that has an id, that node
+    // If a replace operation was done with a value that has an id, that object
     // must have been changed
     return patch.value;
   }
@@ -122,31 +124,25 @@ export const gameReducer = produceWithPatches((draft: Game, action: Action) => {
     };
     draft.players.push(player);
     if (draft.players.length === NUM_PLAYERS) {
-      draft.expectedActions = [
-        { type: "DropPiece", actorId: draft.players[0].id },
-      ];
+      draft.expectedActions = [{ type: "DropPiece", actorPlayerNum: 0 }];
     }
   } else if (action.type === "DropPiece") {
     const dropPieceAction = action as DropPieceAction;
     draft.board = boardApi.boardReducer(draft.board, action);
-    if (draft.board.winningPlayerId) {
+    if (draft.board.winningPlayerNum !== null) {
       draft.expectedActions = [{ type: "ResetBoard" }];
     } else {
-      const playerIdx = draft.players.findIndex(
-        (p) => p.id === dropPieceAction.playerId
-      );
       draft.expectedActions = [
         {
           type: "DropPiece",
-          actorId: draft.players[(playerIdx + 1) % draft.players.length].id,
+          actorPlayerNum:
+            (dropPieceAction.playerNum + 1) % draft.players.length,
         },
       ];
     }
   } else if (action.type === "ResetBoard") {
     draft.board = boardApi.boardReducer(draft.board, action);
-    draft.expectedActions = [
-      { type: "DropPiece", actorId: draft.players[0].id },
-    ];
+    draft.expectedActions = [{ type: "DropPiece", actorPlayerNum: 0 }];
   }
 
   draft.players.forEach(

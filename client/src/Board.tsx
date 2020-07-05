@@ -12,8 +12,8 @@ import {
 } from "./gql_types/Game";
 
 export const dropPieceMutationGql = gql`
-  mutation DropPiece($gameId: ID!, $playerId: ID!, $column: Int!) {
-    dropPiece(gameId: $gameId, playerId: $playerId, column: $column) {
+  mutation DropPiece($gameId: ID!, $playerNum: Int!, $column: Int!) {
+    dropPiece(gameId: $gameId, playerNum: $playerNum, column: $column) {
       ...boardFragment
     }
   }
@@ -22,32 +22,31 @@ export const dropPieceMutationGql = gql`
 
 type Props = {
   board: BoardFragment;
-  currentPlayerId: string | null;
+  currentPlayerNum: number | null;
   gameId: string;
   players: Array<PlayerFragment>;
 };
 
 export function Board(props: Props) {
-  const { board, currentPlayerId, gameId } = props;
+  const { board, currentPlayerNum, gameId } = props;
   const [dropPiece] = useMutation<DropPiece, DropPieceVariables>(
     dropPieceMutationGql
   );
   const handleClickDropPiece = useCallback(
     async (columnIdx: number) => {
-      if (!currentPlayerId) {
+      if (currentPlayerNum === null) {
         throw new Error("Cannot drop piece, no player");
       }
       await dropPiece({
         variables: {
           gameId,
-          playerId: currentPlayerId,
+          playerNum: currentPlayerNum,
           column: columnIdx,
         },
       });
     },
-    [currentPlayerId, dropPiece, gameId]
+    [currentPlayerNum, dropPiece, gameId]
   );
-  const playersById = indexPlayersById(props.players);
   return (
     <div style={{ display: "flex" }}>
       {board.columns.map((col, idx) => (
@@ -56,7 +55,7 @@ export function Board(props: Props) {
           columnIdx={idx}
           key={idx}
           onClickDropPiece={handleClickDropPiece}
-          playersById={playersById}
+          players={props.players}
         />
       ))}
     </div>
@@ -67,7 +66,7 @@ type BoardColumnProps = {
   column: BoardColumnFragment;
   columnIdx: number;
   onClickDropPiece: (columnIdx: number) => Promise<any>;
-  playersById: { [id: string]: PlayerFragment };
+  players: Array<PlayerFragment>;
 };
 
 function BoardColumn(props: BoardColumnProps) {
@@ -81,9 +80,10 @@ function BoardColumn(props: BoardColumnProps) {
         <div
           key={idx}
           style={{
-            backgroundColor: piece.playerId
-              ? props.playersById[piece.playerId].colorHex
-              : "#F2F3F4",
+            backgroundColor:
+              piece.playerNum !== null
+                ? props.players[piece.playerNum].colorHex
+                : "#F2F3F4",
             width: 20,
             height: 20,
           }}
@@ -91,8 +91,4 @@ function BoardColumn(props: BoardColumnProps) {
       ))}
     </div>
   );
-}
-
-function indexPlayersById(players: Array<PlayerFragment>) {
-  return players.reduce((soFar, next) => ({ ...soFar, [next.id]: next }), {});
 }

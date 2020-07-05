@@ -1,27 +1,31 @@
 import { produce } from "immer";
-import { v4 as uuid } from "uuid";
 
-import { Node } from "./node";
+import { GameObject } from "./game_object";
 import { EpochSeconds, currentEpochSeconds } from "./utils";
 import { HeartbeatAction, Action } from "./action";
 
-export interface Player extends Node {
+export interface Player extends GameObject {
   gqlName: "Player";
   colorHex: string;
   name: string;
   lastHeartbeat: EpochSeconds | null;
   isConnected: boolean;
+  playerNum: number;
 }
 
-export function create(fields: Pick<Player, "name"> & Partial<Player>): Player {
-  const { id, name } = fields;
+export function create(
+  fields: Pick<Player, "name" | "gameId" | "playerNum"> & Partial<Player>
+): Player {
+  const { gameId, name, playerNum } = fields;
   return {
-    id: id ?? uuid(),
     gqlName: "Player",
+    gameId,
+    key: `players.${playerNum}`,
     colorHex: "#000000",
     name,
     lastHeartbeat: null,
     isConnected: false,
+    playerNum,
   };
 }
 
@@ -31,7 +35,7 @@ export const playerReducer = produce((draft: Player, action: Action) => {
   const now = currentEpochSeconds();
   if (action.type === "Heartbeat") {
     const heartbeatAction = action as HeartbeatAction;
-    if (heartbeatAction.playerId === draft.id) {
+    if (heartbeatAction.playerNum === draft.playerNum) {
       draft.lastHeartbeat = now;
     }
   }

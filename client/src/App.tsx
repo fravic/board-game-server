@@ -24,7 +24,12 @@ function createApolloLink(endpoint?: string) {
 const fragmentMatcher = new IntrospectionFragmentMatcher({
   introspectionQueryResultData,
 });
-const cache = new InMemoryCache({ fragmentMatcher });
+const cache = new InMemoryCache({
+  fragmentMatcher,
+  // N.B.: This cache assumes that only one game will be active at a time, so we
+  // don't need to query for gameId on every GameObject
+  dataIdFromObject: (object: any) => object.key || null,
+});
 
 const client = new ApolloClient({
   cache: cache,
