@@ -5,7 +5,7 @@ import * as gameApi from "../api/game";
 import * as playerApi from "../api/player";
 import { PlayerGQL } from "./player_schema";
 import { GameObjectGQL } from "./game_object_schema";
-import { ExpectedActionGQL } from "./action_schema";
+import { ExpectedActionsGQL } from "./action_schema";
 import { BoardGQL } from "./board_schema";
 
 export const GameGQL = schema.objectType({
@@ -27,7 +27,7 @@ export const GameGQL = schema.objectType({
         return root.players;
       },
     });
-    t.list.field("expectedActions", { type: ExpectedActionGQL });
+    t.field("expectedActions", { type: ExpectedActionsGQL });
     t.field("board", { type: BoardGQL });
   },
 });

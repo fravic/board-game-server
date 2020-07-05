@@ -32,9 +32,15 @@ type ExpectedAction {
   type: ActionType
 }
 
+type ExpectedActions implements GameObject {
+  actions: [ExpectedAction!]!
+  gameId: ID!
+  key: String!
+}
+
 type Game implements GameObject {
   board: Board!
-  expectedActions: [ExpectedAction!]!
+  expectedActions: ExpectedActions!
   gameId: ID!
   key: String!
   name: String!

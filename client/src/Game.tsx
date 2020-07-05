@@ -22,6 +22,16 @@ export const playerFragment = gql`
   }
 `;
 
+export const expectedActionsFragmentGql = gql`
+  fragment expectedActionsFragment on ExpectedActions {
+    key
+    actions {
+      type
+      actorPlayerNum
+    }
+  }
+`;
+
 export const gameFragment = gql`
   fragment gameFragment on Game {
     gameId
@@ -31,8 +41,7 @@ export const gameFragment = gql`
       ...playerFragment
     }
     expectedActions {
-      type
-      actorPlayerNum
+      ...expectedActionsFragment
     }
     board {
       ...boardFragment
@@ -49,6 +58,7 @@ export const gameQueryGql = gql`
   ${gameFragment}
   ${playerFragment}
   ${boardFragmentGql}
+  ${expectedActionsFragmentGql}
 `;
 
 export const gameEventsSubscriptionGql = gql`
@@ -66,12 +76,16 @@ export const gameEventsSubscriptionGql = gql`
         ... on Board {
           ...boardFragment
         }
+        ... on ExpectedActions {
+          ...expectedActionsFragment
+        }
       }
     }
   }
   ${gameFragment}
   ${playerFragment}
   ${boardFragmentGql}
+  ${expectedActionsFragmentGql}
 `;
 
 export const heartbeatMutationGql = gql`
@@ -149,8 +163,10 @@ export function Game(props: PropsType) {
           disconnectedPlayers={disconnectedPlayers}
           acceptingNewPlayers={Boolean(
             game &&
-              game.expectedActions.length &&
-              game.expectedActions.find((ex) => ex.type === "PlayerJoin")
+              game.expectedActions.actions.length &&
+              game.expectedActions.actions.find(
+                (ex) => ex.type === "PlayerJoin"
+              )
           )}
         />
       )}
@@ -180,8 +196,8 @@ function isCurrentPlayerTurn(
 ): boolean {
   return (
     !!game &&
-    !!game.expectedActions.length &&
-    game.expectedActions.find(
+    !!game.expectedActions.actions.length &&
+    game.expectedActions.actions.find(
       (ex) => ex.type === "DropPiece" && ex.actorPlayerNum === playerNum
     ) !== undefined
   );

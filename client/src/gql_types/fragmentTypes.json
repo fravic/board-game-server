@@ -9,6 +9,9 @@
             "name": "Board"
           },
           {
+            "name": "ExpectedActions"
+          },
+          {
             "name": "Game"
           },
           {

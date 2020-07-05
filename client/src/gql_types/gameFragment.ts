@@ -18,10 +18,16 @@ export interface gameFragment_players {
   colorHex: string;
 }
 
-export interface gameFragment_expectedActions {
+export interface gameFragment_expectedActions_actions {
   __typename: "ExpectedAction";
   type: ActionType | null;
-  actorPlayerNum: string | null;
+  actorPlayerNum: number | null;
+}
+
+export interface gameFragment_expectedActions {
+  __typename: "ExpectedActions";
+  key: string;
+  actions: gameFragment_expectedActions_actions[];
 }
 
 export interface gameFragment_board_columns_pieces {
@@ -53,6 +59,6 @@ export interface gameFragment {
   name: string;
   key: string;
   players: gameFragment_players[];
-  expectedActions: gameFragment_expectedActions[];
+  expectedActions: gameFragment_expectedActions;
   board: gameFragment_board;
 }

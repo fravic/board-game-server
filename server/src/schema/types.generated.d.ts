@@ -8,7 +8,7 @@ import { Board } from "../api/board"
 import { Game } from "../api/game"
 import { GameObject } from "../api/game_object"
 import { Player } from "../api/player"
-import { ExpectedAction } from "../api/action"
+import { ExpectedActions, ExpectedAction } from "../api/action"
 
 
 
@@ -33,6 +33,7 @@ export interface NexusGenRootTypes {
     playerNum?: number | null; // Int
   }
   ExpectedAction: ExpectedAction;
+  ExpectedActions: ExpectedActions;
   Game: Game;
   GameAndPlayer: { // root type
     game: NexusGenRootTypes['Game']; // Game!
@@ -74,9 +75,14 @@ export interface NexusGenFieldTypes {
     actorPlayerNum: number | null; // Int
     type: NexusGenEnums['ActionType'] | null; // ActionType
   }
+  ExpectedActions: { // field return type
+    actions: NexusGenRootTypes['ExpectedAction'][]; // [ExpectedAction!]!
+    gameId: string; // ID!
+    key: string; // String!
+  }
   Game: { // field return type
     board: NexusGenRootTypes['Board']; // Board!
-    expectedActions: NexusGenRootTypes['ExpectedAction'][]; // [ExpectedAction!]!
+    expectedActions: NexusGenRootTypes['ExpectedActions']; // ExpectedActions!
     gameId: string; // ID!
     key: string; // String!
     name: string; // String!
@@ -152,12 +158,12 @@ export interface NexusGenArgTypes {
 }
 
 export interface NexusGenAbstractResolveReturnTypes {
-  GameObject: "Game" | "Board" | "Player"
+  GameObject: "Game" | "Board" | "ExpectedActions" | "Player"
 }
 
 export interface NexusGenInheritedFields {}
 
-export type NexusGenObjectNames = "Board" | "BoardColumn" | "BoardPiece" | "ExpectedAction" | "Game" | "GameAndPlayer" | "GameEvent" | "Mutation" | "Player" | "Query" | "Subscription";
+export type NexusGenObjectNames = "Board" | "BoardColumn" | "BoardPiece" | "ExpectedAction" | "ExpectedActions" | "Game" | "GameAndPlayer" | "GameEvent" | "Mutation" | "Player" | "Query" | "Subscription";
 
 export type NexusGenInputNames = never;
 

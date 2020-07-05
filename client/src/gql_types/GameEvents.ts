@@ -18,10 +18,16 @@ export interface GameEvents_gameEvents_changed_Game_players {
   colorHex: string;
 }
 
-export interface GameEvents_gameEvents_changed_Game_expectedActions {
+export interface GameEvents_gameEvents_changed_Game_expectedActions_actions {
   __typename: "ExpectedAction";
   type: ActionType | null;
-  actorPlayerNum: string | null;
+  actorPlayerNum: number | null;
+}
+
+export interface GameEvents_gameEvents_changed_Game_expectedActions {
+  __typename: "ExpectedActions";
+  key: string;
+  actions: GameEvents_gameEvents_changed_Game_expectedActions_actions[];
 }
 
 export interface GameEvents_gameEvents_changed_Game_board_columns_pieces {
@@ -53,7 +59,7 @@ export interface GameEvents_gameEvents_changed_Game {
   key: string;
   name: string;
   players: GameEvents_gameEvents_changed_Game_players[];
-  expectedActions: GameEvents_gameEvents_changed_Game_expectedActions[];
+  expectedActions: GameEvents_gameEvents_changed_Game_expectedActions;
   board: GameEvents_gameEvents_changed_Game_board;
 }
 
@@ -91,7 +97,20 @@ export interface GameEvents_gameEvents_changed_Board {
   winningPlayerNum: number | null;
 }
 
-export type GameEvents_gameEvents_changed = GameEvents_gameEvents_changed_Game | GameEvents_gameEvents_changed_Player | GameEvents_gameEvents_changed_Board;
+export interface GameEvents_gameEvents_changed_ExpectedActions_actions {
+  __typename: "ExpectedAction";
+  type: ActionType | null;
+  actorPlayerNum: number | null;
+}
+
+export interface GameEvents_gameEvents_changed_ExpectedActions {
+  __typename: "ExpectedActions";
+  gameId: string;
+  key: string;
+  actions: GameEvents_gameEvents_changed_ExpectedActions_actions[];
+}
+
+export type GameEvents_gameEvents_changed = GameEvents_gameEvents_changed_Game | GameEvents_gameEvents_changed_Player | GameEvents_gameEvents_changed_Board | GameEvents_gameEvents_changed_ExpectedActions;
 
 export interface GameEvents_gameEvents {
   __typename: "GameEvent";

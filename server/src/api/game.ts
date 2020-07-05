@@ -7,6 +7,9 @@ import {
   PlayerJoinAction,
   ExpectedAction,
   DropPieceAction,
+  ExpectedActions,
+  expectedActions,
+  isActionExpected,
 } from "./action";
 import { Player, playerReducer } from "./player";
 import { GameObject } from "./game_object";
@@ -16,7 +19,7 @@ import { randomColorHex } from "./utils";
 
 export interface Game extends GameObject {
   gqlName: "Game";
-  expectedActions: Array<ExpectedAction>;
+  expectedActions: ExpectedActions;
   name: string;
   players: Array<Player>;
   board: boardApi.Board;
@@ -26,7 +29,7 @@ export function create(fields: Pick<Game, "name"> & Partial<Game>): Game {
   const { name, players } = fields;
   const gameId = fields.gameId ?? uuid();
   return {
-    expectedActions: [{ type: "PlayerJoin" }],
+    expectedActions: expectedActions(gameId, [{ type: "PlayerJoin" }]),
     gqlName: "Game",
     gameId,
     key: "game",
@@ -54,11 +57,7 @@ export async function dispatchAction(
   const fetchedGame = await fetch(gameId, redis);
 
   // Validate the action
-  if (
-    fetchedGame.expectedActions.find((ex) =>
-      isActionExpected(action, actorPlayerNum, ex)
-    ) === undefined
-  ) {
+  if (!isActionExpected(action, actorPlayerNum, fetchedGame.expectedActions)) {
     console.error(
       "Received unexpected action",
       JSON.stringify(action, null, 2),
@@ -71,7 +70,7 @@ export async function dispatchAction(
   // Perform the action
   const [game, patches] = gameReducer(fetchedGame, action);
   // Note: changed array is shallow; only accounts for one level of GameObjects under Game
-  const changed = uniqBy(patches.map(getChangedFromPatch(game)), (n) => n.id);
+  const changed = uniqBy(patches.map(getChangedFromPatch(game)), (n) => n.key);
 
   // Publish the action (if any Nodes changed)
   await save(game, redis);
@@ -85,25 +84,9 @@ export async function dispatchAction(
   return game;
 }
 
-const isActionExpected = (
-  action: Action,
-  actorPlayerNum: number | null,
-  expectedAction: ExpectedAction
-): boolean => {
-  if (action.type === "Heartbeat") {
-    return true;
-  }
-  // This logic may become more complex later (eg. with action categories)
-  return (
-    action.type === expectedAction.type &&
-    (expectedAction.actorPlayerNum === undefined ||
-      actorPlayerNum === expectedAction.actorPlayerNum)
-  );
-};
-
 const getChangedFromPatch = (game: Game) => (patch: Patch) => {
-  if (patch.op === "replace" && patch.value.id) {
-    // If a replace operation was done with a value that has an id, that object
+  if (patch.op === "replace" && patch.value.key) {
+    // If a replace operation was done with a value that has a key, that object
     // must have been changed
     return patch.value;
   }
@@ -115,6 +98,7 @@ const NUM_PLAYERS = 2;
 
 enablePatches();
 export const gameReducer = produceWithPatches((draft: Game, action: Action) => {
+  const { gameId } = draft;
   if (action.type === "PlayerJoin") {
     const player = {
       ...(action as PlayerJoinAction).player,
@@ -124,25 +108,29 @@ export const gameReducer = produceWithPatches((draft: Game, action: Action) => {
     };
     draft.players.push(player);
     if (draft.players.length === NUM_PLAYERS) {
-      draft.expectedActions = [{ type: "DropPiece", actorPlayerNum: 0 }];
+      draft.expectedActions = expectedActions(gameId, [
+        { type: "DropPiece", actorPlayerNum: 0 },
+      ]);
     }
   } else if (action.type === "DropPiece") {
     const dropPieceAction = action as DropPieceAction;
     draft.board = boardApi.boardReducer(draft.board, action);
     if (draft.board.winningPlayerNum !== null) {
-      draft.expectedActions = [{ type: "ResetBoard" }];
+      draft.expectedActions = expectedActions(gameId, [{ type: "ResetBoard" }]);
     } else {
-      draft.expectedActions = [
+      draft.expectedActions = expectedActions(gameId, [
         {
           type: "DropPiece",
           actorPlayerNum:
             (dropPieceAction.playerNum + 1) % draft.players.length,
         },
-      ];
+      ]);
     }
   } else if (action.type === "ResetBoard") {
     draft.board = boardApi.boardReducer(draft.board, action);
-    draft.expectedActions = [{ type: "DropPiece", actorPlayerNum: 0 }];
+    draft.expectedActions = expectedActions(gameId, [
+      { type: "DropPiece", actorPlayerNum: 0 },
+    ]);
   }
 
   draft.players.forEach(
