@@ -29,6 +29,10 @@ export const BoardGQL = schema.objectType({
     t.implements(NodeGQL);
     t.id("id");
     t.list.field("columns", { type: BoardColumnGQL });
+    t.id("winningPlayerId", {
+      nullable: true,
+      description: "If set, the id of the player who has won the game.",
+    });
   },
 });
 

@@ -61,6 +61,7 @@ export interface NexusGenFieldTypes {
   Board: { // field return type
     columns: NexusGenRootTypes['BoardColumn'][]; // [BoardColumn!]!
     id: string; // ID!
+    winningPlayerId: string | null; // ID
   }
   BoardColumn: { // field return type
     pieces: NexusGenRootTypes['BoardPiece'][]; // [BoardPiece!]!

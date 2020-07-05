@@ -11,6 +11,9 @@ enum ActionType {
 type Board implements Node {
   columns: [BoardColumn!]!
   id: ID!
+
+  """If set, the id of the player who has won the game."""
+  winningPlayerId: ID
 }
 
 type BoardColumn {
