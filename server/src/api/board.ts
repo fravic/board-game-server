@@ -81,7 +81,7 @@ function _numPiecesInARow(
   dy: number
 ): number {
   let count = 0;
-  while (x >= 0 && x <= COLUMNS && y >= 0 && y <= ROWS) {
+  while (x >= 0 && x < COLUMNS && y >= 0 && y < ROWS) {
     if (board.columns[x].pieces[y].playerId !== playerId) {
       return count;
     }

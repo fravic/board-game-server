@@ -66,7 +66,7 @@ export function Board(props: Props) {
 type BoardColumnProps = {
   column: BoardColumnFragment;
   columnIdx: number;
-  onClickDropPiece: (columnIdx: number) => void;
+  onClickDropPiece: (columnIdx: number) => Promise<any>;
   playersById: { [id: string]: PlayerFragment };
 };
 
@@ -83,7 +83,7 @@ function BoardColumn(props: BoardColumnProps) {
           style={{
             backgroundColor: piece.playerId
               ? props.playersById[piece.playerId].colorHex
-              : "transparent",
+              : "#F2F3F4",
             width: 20,
             height: 20,
           }}
