@@ -2,6 +2,9 @@ import { useMutation } from "@apollo/react-hooks";
 import gql from "graphql-tag";
 import React from "react";
 
+import { Button } from "./components/Button";
+import { Modal } from "./components/Modal";
+
 import { playerFragment as PlayerFragment } from "./gql_types/playerFragment";
 import {
   JoinGameAsPlayer,
@@ -44,7 +47,7 @@ export function JoinAsPlayerForm(props: PropsType) {
     [joinGameAsPlayer, props]
   );
   return (
-    <>
+    <Modal>
       {props.acceptingNewPlayers && (
         <NewPlayerForm onSubmit={handleNewPlayerFormSubmit} />
       )}
@@ -59,7 +62,7 @@ export function JoinAsPlayerForm(props: PropsType) {
           {player.name}
         </button>
       ))}
-    </>
+    </Modal>
   );
 }
 
@@ -81,7 +84,9 @@ function NewPlayerForm(props: NewPlayerFormPropsType) {
         value={playerName}
         onChange={(e) => setPlayerName(e.currentTarget.value)}
       />
-      <button type="submit">Join game</button>
+      <Button variant="primary" type="submit">
+        Join game
+      </Button>
     </form>
   );
 }

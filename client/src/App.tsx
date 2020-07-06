@@ -9,6 +9,7 @@ import { WebSocketLink } from "apollo-link-ws";
 import React from "react";
 import { BrowserRouter, Route, Switch } from "react-router-dom";
 
+import { ModalPortal } from "./components/Modal";
 import { Game } from "./Game";
 import { Lobby } from "./Lobby";
 import introspectionQueryResultData from "./gql_types/fragmentTypes.json";
@@ -39,12 +40,14 @@ const client = new ApolloClient({
 export function App() {
   return (
     <ApolloProvider client={client}>
-      <BrowserRouter>
-        <Switch>
-          <Route path="/game/:gameId" component={Game} />
-          <Route path="*" component={Lobby} />
-        </Switch>
-      </BrowserRouter>
+      <ModalPortal>
+        <BrowserRouter>
+          <Switch>
+            <Route path="/game/:gameId" component={Game} />
+            <Route path="*" component={Lobby} />
+          </Switch>
+        </BrowserRouter>
+      </ModalPortal>
     </ApolloProvider>
   );
 }

@@ -4,10 +4,11 @@ import React from "react";
 import { useHistory } from "react-router-dom";
 
 import { CreateGame, CreateGameVariables } from "./gql_types/CreateGame";
+import { Button } from "./components/Button";
 
 const createGameMutationGql = gql`
-  mutation CreateGame($name: String!) {
-    createGame(name: $name) {
+  mutation CreateGame {
+    createGame {
       gameId
     }
   }
@@ -16,7 +17,6 @@ const createGameMutationGql = gql`
 type PropsType = {};
 
 export function Lobby(props: PropsType) {
-  const [gameName, setGameName] = React.useState("My New Game");
   const [createGame] = useMutation<CreateGame, CreateGameVariables>(
     createGameMutationGql
   );
@@ -24,18 +24,16 @@ export function Lobby(props: PropsType) {
   const onFormSubmit = React.useCallback(
     async (e) => {
       e.preventDefault();
-      const res = await createGame({ variables: { name: gameName } });
+      const res = await createGame();
       history.push(`/game/${res.data?.createGame.gameId}`);
     },
-    [createGame, gameName, history]
+    [createGame, history]
   );
   return (
     <form onSubmit={onFormSubmit}>
-      <input
-        onChange={(e) => setGameName(e.currentTarget.value)}
-        value={gameName}
-      />
-      <input type="submit" />
+      <Button variant="primary" type="submit">
+        Create a game
+      </Button>
     </form>
   );
 }
