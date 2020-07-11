@@ -4,7 +4,7 @@ import React, { useEffect, useCallback } from "react";
 import { useParams } from "react-router-dom";
 
 import { Board } from "./Board";
-import { JoinAsPlayerForm } from "./JoinAsPlayerForm";
+import { JoinGameModal } from "./JoinGameModal/";
 import { boardFragmentGql } from "./fragments";
 import { isPlayerNum } from "./utils";
 
@@ -157,7 +157,7 @@ export function Game(props: PropsType) {
       Players: {game?.players.map((p: { name: string }) => p.name)}
       <br />
       {playerNum === null && (
-        <JoinAsPlayerForm
+        <JoinGameModal
           gameId={gameId}
           onSetPlayerNum={setPlayerNum}
           disconnectedPlayers={disconnectedPlayers}

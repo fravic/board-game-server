@@ -3,8 +3,8 @@ import gql from "graphql-tag";
 import React from "react";
 import { useHistory } from "react-router-dom";
 
-import { CreateGame, CreateGameVariables } from "./gql_types/CreateGame";
-import { Button } from "./components/Button";
+import { CreateGame } from "./gql_types/CreateGame";
+import { PrimaryButton } from "./components/Button";
 
 const createGameMutationGql = gql`
   mutation CreateGame {
@@ -17,9 +17,7 @@ const createGameMutationGql = gql`
 type PropsType = {};
 
 export function Lobby(props: PropsType) {
-  const [createGame] = useMutation<CreateGame, CreateGameVariables>(
-    createGameMutationGql
-  );
+  const [createGame] = useMutation<CreateGame>(createGameMutationGql);
   const history = useHistory();
   const onFormSubmit = React.useCallback(
     async (e) => {
@@ -31,9 +29,7 @@ export function Lobby(props: PropsType) {
   );
   return (
     <form onSubmit={onFormSubmit}>
-      <Button variant="primary" type="submit">
-        Create a game
-      </Button>
+      <PrimaryButton type="submit">Create a game</PrimaryButton>
     </form>
   );
 }

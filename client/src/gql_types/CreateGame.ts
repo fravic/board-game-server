@@ -15,7 +15,3 @@ export interface CreateGame_createGame {
 export interface CreateGame {
   createGame: CreateGame_createGame;
 }
-
-export interface CreateGameVariables {
-  name: string;
-}

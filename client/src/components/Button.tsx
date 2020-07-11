@@ -1,40 +1,19 @@
-import React, { CSSProperties } from "react";
+import styled from "styled-components/macro";
 
-import * as theme from "./theme";
+const Button = styled.button`
+  background: transparent;
+  border-radius: 12px;
+  font-size: 24px;
+  font-weight: bold;
+  padding: 15px 44px;
+`;
 
-const commonStyles: CSSProperties = {
-  background: "transparent",
-  borderRadius: 12,
-  fontSize: 24,
-  fontWeight: "bold",
-  padding: "15px 44px",
-};
+export const PrimaryButton = styled(Button)`
+  border: 5px solid ${(props) => props.theme.primaryCta};
+  color: ${(props) => props.theme.primaryCta};
+`;
 
-const primaryStyles: CSSProperties = {
-  ...commonStyles,
-  border: `5px solid ${theme.GREEN}`,
-  color: theme.GREEN,
-};
-
-const secondaryStyles: CSSProperties = {
-  ...commonStyles,
-  border: `5px solid ${theme.TRANSPARENT_GRAY}`,
-  color: theme.TRANSPARENT_GRAY,
-};
-
-type Props = {
-  variant: "primary" | "secondary";
-} & React.DetailedHTMLProps<
-  React.ButtonHTMLAttributes<HTMLButtonElement>,
-  HTMLButtonElement
->;
-
-export function Button(props: Props) {
-  const { variant, ...restProps } = props;
-  return (
-    <button
-      {...restProps}
-      style={variant === "primary" ? primaryStyles : secondaryStyles}
-    />
-  );
-}
+export const SecondaryButton = styled(Button)`
+  border: 5px solid ${(props) => props.theme.secondaryCta};
+  color: ${(props) => props.theme.secondaryCta};
+`;

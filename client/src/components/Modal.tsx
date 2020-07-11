@@ -1,31 +1,24 @@
-import React, {
-  CSSProperties,
-  useContext,
-  createContext,
-  useState,
-  useCallback,
-} from "react";
+import React, { useContext, createContext, useState, useCallback } from "react";
 import ReactDOM from "react-dom";
-
-import { TRANSPARENT_GRAY } from "./theme";
+import styled from "styled-components";
 
 const ModalPortalContext = createContext<HTMLDivElement | null>(null);
 
-const backdropStyles: CSSProperties = {
-  position: "fixed",
-  top: 0,
-  left: 0,
-  right: 0,
-  bottom: 0,
-  background: TRANSPARENT_GRAY,
-  padding: 25,
-};
+const Backdrop = styled.div`
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: ${(props) => props.theme.darkBg};
+  padding: 25px;
+`;
 
-const cardStyles: CSSProperties = {
-  background: "white",
-  borderRadius: 12,
-  padding: 45,
-};
+const Card = styled.div`
+  background: white;
+  border-radius: 12px;
+  padding: 45px;
+`;
 
 type Props = {
   children: React.ReactNode;
@@ -38,9 +31,9 @@ export function Modal(props: Props) {
     return null;
   }
   return ReactDOM.createPortal(
-    <div style={backdropStyles}>
-      <div style={cardStyles}>{props.children}</div>
-    </div>,
+    <Backdrop>
+      <Card>{props.children}</Card>
+    </Backdrop>,
     modalPortalDOMNode
   );
 }
