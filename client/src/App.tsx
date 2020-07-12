@@ -36,7 +36,7 @@ const cache = new InMemoryCache({
 
 const client = new ApolloClient({
   cache: cache,
-  link: createApolloLink(),
+  link: createApolloLink(process.env.REACT_APP_SERVER_ENDPOINT),
 });
 
 export function App() {

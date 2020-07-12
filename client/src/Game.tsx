@@ -5,7 +5,6 @@ import { useParams } from "react-router-dom";
 
 import { Board } from "./Board";
 import { JoinGameModal } from "./JoinGameModal/";
-import { RotateDevice } from "./components/RotateDevice";
 import { PlayerDisplay } from "./PlayerDisplay/";
 import { boardFragmentGql } from "./fragments";
 import { isPlayerNum } from "./utils";
