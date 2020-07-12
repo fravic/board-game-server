@@ -7,4 +7,9 @@ const server = new GraphQLServer({
   schema,
   context,
 });
-server.start(() => console.log("Server is running on http://localhost:4000"));
+server.start(
+  {
+    playground: "/",
+  },
+  () => console.log("Server is running on http://localhost:4000")
+);
