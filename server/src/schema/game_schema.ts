@@ -3,6 +3,7 @@ import * as schema from "@nexus/schema";
 import * as action from "../api/action";
 import * as gameApi from "../api/game";
 import * as playerApi from "../api/player";
+import * as roomCodeApi from "../api/room_code";
 import { PlayerGQL } from "./player_schema";
 import { GameObjectGQL } from "./game_object_schema";
 import { ExpectedActionsGQL } from "./action_schema";
@@ -40,6 +41,14 @@ export const GameAndPlayerPayloadGQL = schema.objectType({
   },
 });
 
+export const CreateGamePayloadGQL = schema.objectType({
+  name: "CreateGamePayload",
+  definition(t) {
+    t.field("game", { type: GameGQL });
+    t.string("roomCode");
+  },
+});
+
 export const Query = schema.extendType({
   type: "Query",
   definition(t) {
@@ -60,7 +69,7 @@ export const Mutation = schema.extendType({
   type: "Mutation",
   definition(t) {
     t.field("createGame", {
-      type: GameGQL,
+      type: CreateGamePayloadGQL,
       nullable: false,
       args: {
         name: schema.stringArg(),
@@ -70,7 +79,12 @@ export const Mutation = schema.extendType({
           name: args.name || "No name",
         });
         gameApi.save(game, ctx.redis);
-        return game;
+        const roomCode = await roomCodeApi.create(
+          { gameId: game.gameId },
+          ctx.redis
+        );
+        await roomCodeApi.save(roomCode, ctx.redis);
+        return { game, roomCode: roomCode.code };
       },
     });
 

@@ -9,7 +9,10 @@ import { PrimaryButton } from "./components/Button";
 const createGameMutationGql = gql`
   mutation CreateGame {
     createGame {
-      gameId
+      game {
+        gameId
+      }
+      roomCode
     }
   }
 `;
@@ -23,7 +26,7 @@ export function Lobby(props: PropsType) {
     async (e) => {
       e.preventDefault();
       const res = await createGame();
-      history.push(`/game/${res.data?.createGame.gameId}`);
+      history.push(`/game/${res.data?.createGame.roomCode}`);
     },
     [createGame, history]
   );

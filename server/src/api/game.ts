@@ -5,7 +5,6 @@ import { v4 as uuid } from "uuid";
 import {
   Action,
   PlayerJoinAction,
-  ExpectedAction,
   DropPieceAction,
   ExpectedActions,
   expectedActions,
@@ -16,11 +15,12 @@ import { Player, playerReducer } from "./player";
 import { GameObject } from "./game_object";
 import { Redis } from "../redis";
 import * as boardApi from "./board";
-import { randomColorHex } from "./utils";
+import { randomColorHex, EpochSeconds, currentEpochSeconds } from "./utils";
 
 export interface Game extends GameObject {
   gqlName: "Game";
   expectedActions: ExpectedActions;
+  lastUpdated: EpochSeconds;
   name: string;
   players: Array<Player>;
   board: boardApi.Board;
@@ -35,13 +35,25 @@ export function create(fields: Pick<Game, "name"> & Partial<Game>): Game {
     gameId,
     key: "game",
     name,
+    lastUpdated: currentEpochSeconds(),
     players: players ?? [],
     board: boardApi.create(gameId),
   };
 }
 
+export class GameNotFoundError extends Error {
+  constructor(m: string) {
+    super(m);
+    Object.setPrototypeOf(this, GameNotFoundError.prototype);
+  }
+}
+
 export async function fetch(id: string, redis: Redis): Promise<Game> {
-  return JSON.parse(await redis.get(id));
+  const unparsed = await redis.get(id);
+  if (!unparsed) {
+    throw new GameNotFoundError(`Could not find game with id ${id}`);
+  }
+  return JSON.parse(unparsed);
 }
 
 export async function save(game: Game, redis: Redis): Promise<Game> {
@@ -85,8 +97,15 @@ export async function dispatchAction(
   return game;
 }
 
+// Paths in the denylist will not result in an update being published to clients
+const CHANGED_PATH_DENYLIST = new Set<string | number>(["lastUpdated"]);
+
 const getChangedFromPatch = (game: Game) => (patch: Patch) => {
-  if (patch.op === "replace" && patch.value.key) {
+  if (
+    patch.op === "replace" &&
+    patch.value.key &&
+    !CHANGED_PATH_DENYLIST.has(patch.path[0])
+  ) {
     // If a replace operation was done with a value that has a key, that object
     // must have been changed
     return patch.value;
@@ -137,4 +156,6 @@ export const gameReducer = produceWithPatches((draft: Game, action: Action) => {
   draft.players.forEach(
     (player, idx) => (draft.players[idx] = playerReducer(player, action))
   );
+
+  draft.lastUpdated = currentEpochSeconds();
 });

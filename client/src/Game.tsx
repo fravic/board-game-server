@@ -4,6 +4,7 @@ import React, { useEffect, useCallback } from "react";
 import { useParams } from "react-router-dom";
 
 import { Board } from "./Board";
+import { Flexbox } from "./components/Flexbox";
 import { JoinGameModal } from "./JoinGameModal/";
 import { PlayerDisplay } from "./PlayerDisplay/";
 import { boardFragmentGql } from "./fragments";
@@ -12,7 +13,7 @@ import { isPlayerNum } from "./utils";
 import { Game as GameQuery, Game_game as GameFragment } from "./gql_types/Game";
 import { GameEvents, GameEventsVariables } from "./gql_types/GameEvents";
 import { Heartbeat, HeartbeatVariables } from "./gql_types/Heartbeat";
-import { Flexbox } from "./components/Flexbox";
+import { RoomCode as RoomCodeQuery } from "./gql_types/RoomCode";
 
 export const playerFragment = gql`
   fragment playerFragment on Player {
@@ -47,6 +48,14 @@ export const gameFragment = gql`
     }
     board {
       ...boardFragment
+    }
+  }
+`;
+
+export const roomCodeQueryGql = gql`
+  query RoomCode($code: String!) {
+    roomCode(code: $code) {
+      gameId
     }
   }
 `;
@@ -110,16 +119,22 @@ export const resetBoardMutationGql = gql`
 type PropsType = {};
 
 export function Game(props: PropsType) {
-  const { gameId } = useParams();
+  const { roomCode } = useParams();
+  const { data: roomCodeData } = useQuery<RoomCodeQuery>(roomCodeQueryGql, {
+    variables: { code: roomCode },
+  });
+  const gameId = roomCodeData?.roomCode.gameId;
   const { data } = useQuery<GameQuery>(gameQueryGql, {
     variables: { id: gameId },
+    skip: !gameId,
   });
   const game = data?.game;
 
   const { error } = useSubscription<GameEvents, GameEventsVariables>(
     gameEventsSubscriptionGql,
     {
-      variables: { gameId: gameId },
+      variables: { gameId: gameId! },
+      skip: !gameId,
     }
   );
 
@@ -134,7 +149,11 @@ export function Game(props: PropsType) {
     heartbeatMutationGql
   );
   useEffect(() => {
-    heartbeat({ variables: { playerNum, gameId } });
+    if (!gameId) {
+      return;
+    }
+
+    heartbeat({ variables: { playerNum, gameId: gameId! } });
 
     const interval = setInterval(() => {
       if (gameId) {
@@ -172,7 +191,7 @@ export function Game(props: PropsType) {
         players={game?.players ?? null}
         localPlayerNum={playerNum}
       />
-      {game?.board && (
+      {gameId && game?.board && (
         <Board
           board={game?.board}
           currentPlayerNum={playerNum}
@@ -181,7 +200,7 @@ export function Game(props: PropsType) {
           players={game?.players}
         />
       )}
-      {playerNum === null && !joinGameModalDismissed && (
+      {gameId && playerNum === null && !joinGameModalDismissed && (
         <JoinGameModal
           gameId={gameId}
           onDismiss={() => setJoinGameModalDismissed(true)}

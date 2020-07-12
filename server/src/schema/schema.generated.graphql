@@ -27,6 +27,11 @@ type BoardPiece {
   playerNum: Int
 }
 
+type CreateGamePayload {
+  game: Game!
+  roomCode: String!
+}
+
 type ExpectedAction {
   actorPlayerNum: Int
   type: ActionType
@@ -63,7 +68,7 @@ interface GameObject {
 }
 
 type Mutation {
-  createGame(name: String): Game!
+  createGame(name: String): CreateGamePayload!
   dropPiece(column: Int!, gameId: ID!, playerNum: Int!): Board!
   heartbeat(gameId: ID!, playerNum: Int): Game!
 
@@ -83,6 +88,12 @@ type Player implements GameObject {
 
 type Query {
   game(id: ID!): Game!
+  roomCode(code: String!): RoomCode!
+}
+
+type RoomCode {
+  code: String!
+  gameId: String!
 }
 
 type Subscription {

@@ -32,6 +32,10 @@ export interface NexusGenRootTypes {
   BoardPiece: { // root type
     playerNum?: number | null; // Int
   }
+  CreateGamePayload: { // root type
+    game: NexusGenRootTypes['Game']; // Game!
+    roomCode: string; // String!
+  }
   ExpectedAction: ExpectedAction;
   ExpectedActions: ExpectedActions;
   Game: Game;
@@ -45,6 +49,10 @@ export interface NexusGenRootTypes {
   Mutation: {};
   Player: Player;
   Query: {};
+  RoomCode: { // root type
+    code: string; // String!
+    gameId: string; // String!
+  }
   Subscription: {};
   GameObject: GameObject;
   String: string;
@@ -70,6 +78,10 @@ export interface NexusGenFieldTypes {
   }
   BoardPiece: { // field return type
     playerNum: number | null; // Int
+  }
+  CreateGamePayload: { // field return type
+    game: NexusGenRootTypes['Game']; // Game!
+    roomCode: string; // String!
   }
   ExpectedAction: { // field return type
     actorPlayerNum: number | null; // Int
@@ -97,7 +109,7 @@ export interface NexusGenFieldTypes {
     changed: NexusGenRootTypes['GameObject'][]; // [GameObject!]!
   }
   Mutation: { // field return type
-    createGame: NexusGenRootTypes['Game']; // Game!
+    createGame: NexusGenRootTypes['CreateGamePayload']; // CreateGamePayload!
     dropPiece: NexusGenRootTypes['Board']; // Board!
     heartbeat: NexusGenRootTypes['Game']; // Game!
     joinGameAsPlayer: NexusGenRootTypes['GameAndPlayer']; // GameAndPlayer!
@@ -113,6 +125,11 @@ export interface NexusGenFieldTypes {
   }
   Query: { // field return type
     game: NexusGenRootTypes['Game']; // Game!
+    roomCode: NexusGenRootTypes['RoomCode']; // RoomCode!
+  }
+  RoomCode: { // field return type
+    code: string; // String!
+    gameId: string; // String!
   }
   Subscription: { // field return type
     gameEvents: NexusGenRootTypes['GameEvent']; // GameEvent!
@@ -149,6 +166,9 @@ export interface NexusGenArgTypes {
     game: { // args
       id: string; // ID!
     }
+    roomCode: { // args
+      code: string; // String!
+    }
   }
   Subscription: {
     gameEvents: { // args
@@ -163,7 +183,7 @@ export interface NexusGenAbstractResolveReturnTypes {
 
 export interface NexusGenInheritedFields {}
 
-export type NexusGenObjectNames = "Board" | "BoardColumn" | "BoardPiece" | "ExpectedAction" | "ExpectedActions" | "Game" | "GameAndPlayer" | "GameEvent" | "Mutation" | "Player" | "Query" | "Subscription";
+export type NexusGenObjectNames = "Board" | "BoardColumn" | "BoardPiece" | "CreateGamePayload" | "ExpectedAction" | "ExpectedActions" | "Game" | "GameAndPlayer" | "GameEvent" | "Mutation" | "Player" | "Query" | "RoomCode" | "Subscription";
 
 export type NexusGenInputNames = never;
 
