@@ -2,6 +2,7 @@ import { useMutation, useQuery, useSubscription } from "@apollo/react-hooks";
 import gql from "graphql-tag";
 import React, { useEffect, useCallback } from "react";
 import { useParams } from "react-router-dom";
+import styled from "styled-components/macro";
 
 import { Board } from "./Board";
 import { Flexbox } from "./components/Flexbox";
@@ -14,6 +15,7 @@ import { Game as GameQuery, Game_game as GameFragment } from "./gql_types/Game";
 import { GameEvents, GameEventsVariables } from "./gql_types/GameEvents";
 import { Heartbeat, HeartbeatVariables } from "./gql_types/Heartbeat";
 import { RoomCode as RoomCodeQuery } from "./gql_types/RoomCode";
+import { Spinner } from "./components/Spinner";
 
 export const playerFragment = gql`
   fragment playerFragment on Player {
@@ -120,11 +122,13 @@ type PropsType = {};
 
 export function Game(props: PropsType) {
   const { roomCode } = useParams();
-  const { data: roomCodeData } = useQuery<RoomCodeQuery>(roomCodeQueryGql, {
+  const { data: roomCodeData, loading: roomCodeLoading } = useQuery<
+    RoomCodeQuery
+  >(roomCodeQueryGql, {
     variables: { code: roomCode },
   });
   const gameId = roomCodeData?.roomCode.gameId;
-  const { data } = useQuery<GameQuery>(gameQueryGql, {
+  const { data, loading: gameLoading } = useQuery<GameQuery>(gameQueryGql, {
     variables: { id: gameId },
     skip: !gameId,
   });
@@ -140,9 +144,7 @@ export function Game(props: PropsType) {
 
   const [playerNum, setPlayerNum] = React.useState<number | null>(null);
 
-  const disconnectedPlayers = (game?.players || []).filter(
-    (p) => !p.isConnected
-  );
+  const disconnectedPlayers = (game?.players || []).filter(p => !p.isConnected);
   const disconnectedPlayerCount = disconnectedPlayers.length;
 
   const [heartbeat] = useMutation<Heartbeat, HeartbeatVariables>(
@@ -180,7 +182,7 @@ export function Game(props: PropsType) {
   }, [disconnectedPlayerCount]);
 
   const expectedActorPlayerNums = React.useMemo(
-    () => new Set(game?.expectedActions.actions.map((a) => a.actorPlayerNum)),
+    () => new Set(game?.expectedActions.actions.map(a => a.actorPlayerNum)),
     [game]
   );
 
@@ -209,9 +211,7 @@ export function Game(props: PropsType) {
           acceptingNewPlayers={Boolean(
             game &&
               game.expectedActions.actions.length &&
-              game.expectedActions.actions.find(
-                (ex) => ex.type === "PlayerJoin"
-              )
+              game.expectedActions.actions.find(ex => ex.type === "PlayerJoin")
           )}
         />
       )}
@@ -222,6 +222,9 @@ export function Game(props: PropsType) {
         </div>
       )}
       {error && error.toString()}
+      {roomCodeLoading || gameLoading ? (
+        <LoadingSpinner>loading</LoadingSpinner>
+      ) : null}
     </Flexbox>
   );
 }
@@ -234,7 +237,11 @@ function isCurrentPlayerTurn(
     !!game &&
     !!game.expectedActions.actions.length &&
     game.expectedActions.actions.find(
-      (ex) => ex.type === "DropPiece" && ex.actorPlayerNum === playerNum
+      ex => ex.type === "DropPiece" && ex.actorPlayerNum === playerNum
     ) !== undefined
   );
 }
+
+const LoadingSpinner = styled(Spinner)`
+  width: 100%;
+`;
