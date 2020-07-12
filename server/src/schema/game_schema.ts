@@ -91,7 +91,7 @@ export const Mutation = schema.extendType({
           gameId,
           action.playerJoin(player),
           playerNum,
-          ctx.redis
+          ctx
         );
         return { game, player };
       },
@@ -109,7 +109,7 @@ export const Mutation = schema.extendType({
           args.gameId,
           action.heartbeat(args.playerNum ?? null),
           null,
-          ctx.redis
+          ctx
         );
         gameApi.save(game, ctx.redis);
         return game;

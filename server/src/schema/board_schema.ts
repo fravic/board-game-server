@@ -54,7 +54,7 @@ export const Mutation = schema.extendType({
           gameId,
           action.dropPiece(playerNum, column),
           playerNum,
-          ctx.redis
+          ctx
         );
         return game.board;
       },
@@ -72,7 +72,7 @@ export const Mutation = schema.extendType({
           gameId,
           action.resetBoard(),
           null,
-          ctx.redis
+          ctx
         );
         return game.board;
       },

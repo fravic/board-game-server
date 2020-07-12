@@ -11,6 +11,7 @@ import {
   expectedActions,
   isActionExpected,
 } from "./action";
+import { Context } from "../context";
 import { Player, playerReducer } from "./player";
 import { GameObject } from "./game_object";
 import { Redis } from "../redis";
@@ -52,9 +53,9 @@ export async function dispatchAction(
   gameId: string,
   action: Action,
   actorPlayerNum: number | null,
-  redis: Redis
+  context: Context
 ): Promise<Game> {
-  const fetchedGame = await fetch(gameId, redis);
+  const fetchedGame = await fetch(gameId, context.redis);
 
   // Validate the action
   if (!isActionExpected(action, actorPlayerNum, fetchedGame.expectedActions)) {
@@ -73,9 +74,9 @@ export async function dispatchAction(
   const changed = uniqBy(patches.map(getChangedFromPatch(game)), (n) => n.key);
 
   // Publish the action (if any Nodes changed)
-  await save(game, redis);
+  await save(game, context.redis);
   if (changed.length) {
-    await redis.pubsub.publish(gameId, JSON.stringify({ changed }));
+    await context.pubsub.publish(gameId, JSON.stringify({ changed }));
     if (action.type !== "Heartbeat") {
       console.dir([action, changed], { depth: null });
     }

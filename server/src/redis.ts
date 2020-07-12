@@ -1,5 +1,4 @@
 import _redis from "redis";
-import { RedisPubSub } from "graphql-redis-subscriptions";
 import { promisify } from "util";
 
 const DEFAULT_REDIS_PORT = 6379;
@@ -15,15 +14,9 @@ function createRedisClient() {
 
 const defaultRedisClient = createRedisClient();
 
-const pubsub = new RedisPubSub({
-  publisher: createRedisClient(),
-  subscriber: createRedisClient(),
-});
-
 export const redis = {
   get: promisify(defaultRedisClient.get).bind(defaultRedisClient),
   set: promisify(defaultRedisClient.set).bind(defaultRedisClient),
-  pubsub,
 };
 
 export type Redis = typeof redis;

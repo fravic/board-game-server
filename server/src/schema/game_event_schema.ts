@@ -15,7 +15,7 @@ export const GameEventSubscriptionGQL = subscriptionField("gameEvents", {
     gameId: idArg({ required: true }),
   },
   subscribe(_root, args, ctx) {
-    return ctx.redis.pubsub.asyncIterator(args.gameId);
+    return ctx.pubsub.asyncIterator(args.gameId);
   },
   async resolve(payload, _args, _ctx) {
     return JSON.parse(payload);
