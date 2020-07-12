@@ -2,9 +2,9 @@ import React, { useContext, createContext, useState, useCallback } from "react";
 import ReactDOM from "react-dom";
 import styled from "styled-components";
 
-const ModalPortalContext = createContext<HTMLDivElement | null>(null);
+export const ModalPortalContext = createContext<HTMLDivElement | null>(null);
 
-const Backdrop = styled.div`
+export const Backdrop = styled.div`
   position: fixed;
   top: 0;
   left: 0;
@@ -14,7 +14,7 @@ const Backdrop = styled.div`
   padding: 25px;
 `;
 
-const Card = styled.div`
+export const Card = styled.div`
   background: white;
   border-radius: 12px;
   padding: 45px;
