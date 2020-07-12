@@ -8,8 +8,21 @@ export const WHITE = "#FFF";
 
 // styled-components theme
 export const theme = {
+  // Text
+  bodyTextColor: DARK_GRAY,
+
+  // Background
+  lightBg: WHITE,
+  lineBg: LIGHT_GRAY,
+  inputBg: LIGHTER_GRAY,
+  darkBg: TRANSPARENT_GRAY,
+
+  // CTAs
   primaryCta: GREEN,
   secondaryCta: TRANSPARENT_GRAY,
-  lightBg: WHITE,
-  darkBg: TRANSPARENT_GRAY,
+
+  // Spacing
+  med: "12px",
+  large: "24px",
+  xlarge: "48px",
 };

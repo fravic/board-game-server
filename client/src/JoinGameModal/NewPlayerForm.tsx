@@ -1,8 +1,11 @@
 import { useMutation } from "@apollo/react-hooks";
-import React from "react";
 import gql from "graphql-tag";
+import React from "react";
+import styled from "styled-components";
 
-import { PrimaryButton } from "../components/Button";
+import { PrimaryButton, SecondaryButton } from "../components/Button";
+import { Input } from "../components/Form";
+import { Header } from "../components/Text";
 
 import {
   JoinGameAsPlayer,
@@ -21,6 +24,7 @@ export const joinGameAsPlayerMutationGql = gql`
 
 type PropsType = {
   gameId: string;
+  onDismiss: () => void;
   onSetPlayerNum: (playerNum: number) => void;
 };
 
@@ -46,12 +50,25 @@ export function NewPlayerForm(props: PropsType) {
   );
   return (
     <form onSubmit={handleFormSubmit}>
-      Your name:
-      <input
-        value={playerName}
-        onChange={(e) => setPlayerName(e.currentTarget.value)}
-      />
-      <PrimaryButton type="submit">Join game</PrimaryButton>
+      <div>
+        <Header as="div">Type a nickname</Header>
+        <NameInput
+          value={playerName}
+          onChange={(e) => setPlayerName(e.currentTarget.value)}
+        />
+        <PrimaryButton type="submit">Join game</PrimaryButton>
+      </div>
+      <DividerLine />
+      <SecondaryButton onClick={props.onDismiss}>Spectate game</SecondaryButton>
     </form>
   );
 }
+
+const NameInput = styled(Input)`
+  margin-right: ${({ theme }) => theme.med};
+`;
+
+const DividerLine = styled.div`
+  border-bottom: 1px solid ${({ theme }) => theme.lineBg};
+  margin: ${({ theme }) => theme.xlarge} 0;
+`;

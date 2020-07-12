@@ -24,3 +24,9 @@ Backend server for a generic board game. Design goals:
 - `cd client`
 - `yarn install` to install JS/TS packages
 - `yarn dev` to start devserver
+
+---
+
+## Caveats
+
+There is an assumption that a single game is hosted by a single Node server. Race conditions with Redis when multiple Node servers access the same game are not accounted for.

@@ -5,7 +5,7 @@ const Button = styled.button`
   border-radius: 12px;
   font-size: 24px;
   font-weight: bold;
-  padding: 15px 44px;
+  padding: ${({ theme }) => `${theme.med} ${theme.large}`};
 `;
 
 export const PrimaryButton = styled(Button)`

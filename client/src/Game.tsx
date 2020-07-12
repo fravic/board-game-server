@@ -126,6 +126,7 @@ export function Game(props: PropsType) {
   const disconnectedPlayers = (game?.players || []).filter(
     (p) => !p.isConnected
   );
+  const disconnectedPlayerCount = disconnectedPlayers.length;
 
   const [heartbeat] = useMutation<Heartbeat, HeartbeatVariables>(
     heartbeatMutationGql
@@ -148,6 +149,15 @@ export function Game(props: PropsType) {
     await resetBoard({ variables: { gameId } });
   }, [gameId, resetBoard]);
 
+  const [joinGameModalDismissed, setJoinGameModalDismissed] = React.useState(
+    false
+  );
+  useEffect(() => {
+    if (disconnectedPlayerCount > 0) {
+      setJoinGameModalDismissed(false);
+    }
+  }, [disconnectedPlayerCount]);
+
   return (
     <div>
       Game Id: {gameId}
@@ -156,9 +166,10 @@ export function Game(props: PropsType) {
       <br />
       Players: {game?.players.map((p: { name: string }) => p.name)}
       <br />
-      {playerNum === null && (
+      {playerNum === null && !joinGameModalDismissed && (
         <JoinGameModal
           gameId={gameId}
+          onDismiss={() => setJoinGameModalDismissed(true)}
           onSetPlayerNum={setPlayerNum}
           disconnectedPlayers={disconnectedPlayers}
           acceptingNewPlayers={Boolean(

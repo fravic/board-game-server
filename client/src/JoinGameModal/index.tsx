@@ -10,17 +10,20 @@ type PropsType = {
   acceptingNewPlayers: boolean;
   disconnectedPlayers: Array<PlayerFragment>;
   gameId: string;
+  onDismiss: () => void;
   onSetPlayerNum: (playerNum: number) => void;
 };
 
 export function JoinGameModal(props: PropsType) {
-  const [declinedToReconnect, setDeclinedToReconnect] = React.useState(false);
-  if (props.disconnectedPlayers.length && !declinedToReconnect) {
+  const [wantsToJoinAsNew, setWantsToJoinAsNew] = React.useState(false);
+  if (props.disconnectedPlayers.length && !wantsToJoinAsNew) {
     return (
       <Modal>
         <ReconnectAsPlayerForm
+          acceptingNewPlayers={props.acceptingNewPlayers}
           disconnectedPlayers={props.disconnectedPlayers}
-          onDeclineToReconnect={() => setDeclinedToReconnect(true)}
+          onDismiss={props.onDismiss}
+          onClickNewPlayer={() => setWantsToJoinAsNew(true)}
           onSetPlayerNum={props.onSetPlayerNum}
         />
       </Modal>
@@ -30,6 +33,7 @@ export function JoinGameModal(props: PropsType) {
       <Modal>
         <NewPlayerForm
           gameId={props.gameId}
+          onDismiss={props.onDismiss}
           onSetPlayerNum={props.onSetPlayerNum}
         />
       </Modal>
