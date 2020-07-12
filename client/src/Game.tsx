@@ -204,7 +204,6 @@ export function Game(props: PropsType) {
         </div>
       )}
       {error && error.toString()}
-      <RotateDevice />
     </Flexbox>
   );
 }
