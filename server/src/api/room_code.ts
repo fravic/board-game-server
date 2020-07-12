@@ -12,6 +12,7 @@ export type RoomCode = {
 const ROOM_CODE_REDIS_PREFIX = "room_code_";
 const ROOM_CODE_LEN = 4;
 const ROOM_CODE_EXPIRY: EpochSeconds = 60 * 60 * 24 * 10; // 10 days
+const MAX_CREATION_ATTEMPTS = 5;
 
 export async function create(
   fields: Pick<RoomCode, "gameId">,
@@ -19,7 +20,11 @@ export async function create(
 ): Promise<RoomCode> {
   let game: gameApi.Game | null = null;
   let code;
+  let attempts = 0;
   do {
+    if (++attempts > MAX_CREATION_ATTEMPTS) {
+      throw new Error("Unable to generate room code");
+    }
     code = randString.generate({
       length: ROOM_CODE_LEN,
       readable: true,
