@@ -8,7 +8,7 @@ import { SubscriptionClient } from "subscriptions-transport-ws";
 import { WebSocketLink } from "apollo-link-ws";
 import React from "react";
 import { BrowserRouter, Route, Switch } from "react-router-dom";
-import { ThemeProvider } from "styled-components";
+import { ThemeProvider } from "styled-components/macro";
 
 import { ModalPortal } from "./components/Modal";
 import { Game } from "./Game";

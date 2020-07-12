@@ -1,7 +1,7 @@
 import { useMutation } from "@apollo/react-hooks";
 import gql from "graphql-tag";
 import React from "react";
-import styled from "styled-components";
+import styled from "styled-components/macro";
 
 import { PrimaryButton, SecondaryButton } from "../components/Button";
 import { Input } from "../components/Form";

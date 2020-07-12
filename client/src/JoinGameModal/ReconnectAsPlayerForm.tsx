@@ -1,5 +1,5 @@
 import React from "react";
-import styled from "styled-components";
+import styled from "styled-components/macro";
 
 import { PrimaryButton, SecondaryButton } from "../components/Button";
 import { Header } from "../components/Text";

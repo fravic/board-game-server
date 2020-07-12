@@ -6,12 +6,14 @@ import { useParams } from "react-router-dom";
 import { Board } from "./Board";
 import { JoinGameModal } from "./JoinGameModal/";
 import { RotateDevice } from "./components/RotateDevice";
+import { PlayerDisplay } from "./PlayerDisplay/";
 import { boardFragmentGql } from "./fragments";
 import { isPlayerNum } from "./utils";
 
 import { Game as GameQuery, Game_game as GameFragment } from "./gql_types/Game";
 import { GameEvents, GameEventsVariables } from "./gql_types/GameEvents";
 import { Heartbeat, HeartbeatVariables } from "./gql_types/Heartbeat";
+import { Flexbox } from "./components/Flexbox";
 
 export const playerFragment = gql`
   fragment playerFragment on Player {
@@ -159,14 +161,27 @@ export function Game(props: PropsType) {
     }
   }, [disconnectedPlayerCount]);
 
+  const expectedActorPlayerNums = React.useMemo(
+    () => new Set(game?.expectedActions.actions.map((a) => a.actorPlayerNum)),
+    [game]
+  );
+
   return (
-    <div>
-      Game Id: {gameId}
-      <br />
-      Name: {data?.game?.name}
-      <br />
-      Players: {game?.players.map((p: { name: string }) => p.name)}
-      <br />
+    <Flexbox>
+      <PlayerDisplay
+        expectedActorPlayerNums={expectedActorPlayerNums}
+        players={game?.players ?? null}
+        localPlayerNum={playerNum}
+      />
+      {game?.board && (
+        <Board
+          board={game?.board}
+          currentPlayerNum={playerNum}
+          gameId={gameId}
+          isCurrentPlayerTurn={isCurrentPlayerTurn(game, playerNum)}
+          players={game?.players}
+        />
+      )}
       {playerNum === null && !joinGameModalDismissed && (
         <JoinGameModal
           gameId={gameId}
@@ -182,15 +197,6 @@ export function Game(props: PropsType) {
           )}
         />
       )}
-      {game?.board && (
-        <Board
-          board={game?.board}
-          currentPlayerNum={playerNum}
-          gameId={gameId}
-          isCurrentPlayerTurn={isCurrentPlayerTurn(game, playerNum)}
-          players={game?.players}
-        />
-      )}
       {isPlayerNum(game?.board.winningPlayerNum) && (
         <div>
           {game?.board.winningPlayerNum} wins!{" "}
@@ -199,7 +205,7 @@ export function Game(props: PropsType) {
       )}
       {error && error.toString()}
       <RotateDevice />
-    </div>
+    </Flexbox>
   );
 }
 

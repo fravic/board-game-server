@@ -1,6 +1,6 @@
 import React, { useContext, createContext, useState, useCallback } from "react";
 import ReactDOM from "react-dom";
-import styled from "styled-components";
+import styled from "styled-components/macro";
 
 export const ModalPortalContext = createContext<HTMLDivElement | null>(null);
 
