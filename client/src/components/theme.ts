@@ -10,6 +10,7 @@ export const WHITE = "#FFF";
 export const theme = {
   // Text
   bodyTextColor: DARK_GRAY,
+  lightTextColor: WHITE,
 
   // Background
   lightBg: WHITE,
@@ -22,7 +23,12 @@ export const theme = {
   secondaryCta: TRANSPARENT_GRAY,
 
   // Spacing
+  small: "6px",
   med: "12px",
   large: "24px",
   xlarge: "48px",
+
+  // Breakpoints
+  tablet: "@media (min-width: 481px)",
+  desktop: "@media (min-width: 769px)",
 };

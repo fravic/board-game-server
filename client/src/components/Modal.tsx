@@ -10,14 +10,21 @@ export const Backdrop = styled.div`
   left: 0;
   right: 0;
   bottom: 0;
-  background: ${(props) => props.theme.darkBg};
+  background: ${props => props.theme.darkBg};
   padding: 25px;
 `;
 
 export const Card = styled.div`
   background: white;
   border-radius: 12px;
-  padding: 45px;
+
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 20px;
+
+  ${({ theme }) => theme.tablet} {
+    padding: 45px;
+  }
 `;
 
 type Props = {

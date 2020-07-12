@@ -4,6 +4,7 @@ import React from "react";
 import styled from "styled-components/macro";
 
 import { PrimaryButton, SecondaryButton } from "../components/Button";
+import { CenterColumnBox, Flexbox } from "../components/Flexbox";
 import { Input } from "../components/Form";
 import { Header } from "../components/Text";
 
@@ -35,7 +36,7 @@ export function NewPlayerForm(props: PropsType) {
     JoinGameAsPlayerVariables
   >(joinGameAsPlayerMutationGql);
   const handleFormSubmit = React.useCallback(
-    async (e) => {
+    async e => {
       e.preventDefault();
       const res = await joinGameAsPlayer({
         variables: { gameId: props.gameId, name: playerName },
@@ -51,24 +52,57 @@ export function NewPlayerForm(props: PropsType) {
   return (
     <form onSubmit={handleFormSubmit}>
       <div>
-        <Header as="div">Type a nickname</Header>
-        <NameInput
-          value={playerName}
-          onChange={(e) => setPlayerName(e.currentTarget.value)}
-        />
-        <PrimaryButton type="submit">Join game</PrimaryButton>
+        <HeaderPrompt as="div">Type a nickname</HeaderPrompt>
+        <Flexbox>
+          <NameInput
+            value={playerName}
+            onChange={e => setPlayerName(e.currentTarget.value)}
+          />
+          <PrimaryButton type="submit">Join game</PrimaryButton>
+        </Flexbox>
       </div>
-      <DividerLine />
-      <SecondaryButton onClick={props.onDismiss}>Spectate game</SecondaryButton>
+      <DividerLine>
+        <DividerOr>Or</DividerOr>
+      </DividerLine>
+      <CenterColumnBox>
+        <SecondaryButton onClick={props.onDismiss}>
+          Spectate game
+        </SecondaryButton>
+      </CenterColumnBox>
     </form>
   );
 }
 
+const HeaderPrompt = styled(Header)`
+  margin-bottom: ${p => p.theme.small};
+`;
+
 const NameInput = styled(Input)`
-  margin-right: ${({ theme }) => theme.med};
+  flex-grow: 1;
+  margin-right: ${p => p.theme.med};
+  margin-bottom: ${p => p.theme.med};
+
+  ${({ theme }) => theme.tablet} {
+    margin-bottom: 0;
+  }
 `;
 
 const DividerLine = styled.div`
-  border-bottom: 1px solid ${({ theme }) => theme.lineBg};
-  margin: ${({ theme }) => theme.xlarge} 0;
+  border-bottom: 1px solid ${p => p.theme.lineBg};
+  margin: ${p => p.theme.xlarge} 0;
+  position: relative;
+
+  text-transform: uppercase;
+`;
+
+const DividerOr = styled.div`
+  padding: 4px 10px;
+  position: absolute;
+  left: 50%;
+  top: -13px;
+  margin-left: -22px;
+
+  color: ${p => p.theme.secondaryCta};
+  background: ${p => p.theme.lightBg};
+  font-weight: bold;
 `;

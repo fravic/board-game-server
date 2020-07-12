@@ -2,6 +2,11 @@ import styled from "styled-components/macro";
 
 export const Flexbox = styled.div`
   display: flex;
+  flex-wrap: wrap;
+
+  ${p => p.theme.tablet} {
+    flex-wrap: nowrap;
+  }
 `;
 
 export const CenterColumnBox = styled.div`

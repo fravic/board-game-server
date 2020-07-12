@@ -1,4 +1,5 @@
 import React from "react";
+import styled from "styled-components";
 
 import { PlayerName } from "./PlayerName";
 
@@ -12,7 +13,7 @@ type PropsType = {
 
 export const PlayerDisplay = (props: PropsType) => {
   return (
-    <div>
+    <PlayerDisplayWrapper>
       {props.players?.map((player, playerNum) => (
         <PlayerName
           key={playerNum}
@@ -21,6 +22,15 @@ export const PlayerDisplay = (props: PropsType) => {
           isLocalPlayer={props.localPlayerNum === playerNum}
         />
       ))}
-    </div>
+    </PlayerDisplayWrapper>
   );
 };
+
+const PlayerDisplayWrapper = styled.div`
+  padding: ${p => p.theme.large};
+  flex: 100% 0 0;
+
+  ${p => p.theme.tablet} {
+    flex: 0 0 0;
+  }
+`;

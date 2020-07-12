@@ -1,19 +1,23 @@
 import styled from "styled-components/macro";
 
 const Button = styled.button`
-  background: transparent;
   border-radius: 12px;
   font-size: 24px;
   font-weight: bold;
   padding: ${({ theme }) => `${theme.med} ${theme.large}`};
+  width: 100%;
+
+  ${({ theme }) => theme.tablet} {
+    width: auto;
+  }
 `;
 
 export const PrimaryButton = styled(Button)`
-  border: 5px solid ${(props) => props.theme.primaryCta};
-  color: ${(props) => props.theme.primaryCta};
+  background: ${p => p.theme.primaryCta};
+  color: ${p => p.theme.lightTextColor};
 `;
 
 export const SecondaryButton = styled(Button)`
-  border: 5px solid ${(props) => props.theme.secondaryCta};
-  color: ${(props) => props.theme.secondaryCta};
+  background: ${p => p.theme.secondaryCta};
+  color: ${p => p.theme.lightTextColor};
 `;

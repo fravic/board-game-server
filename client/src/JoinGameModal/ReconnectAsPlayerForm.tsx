@@ -25,7 +25,7 @@ export function ReconnectAsPlayerForm(props: PropsType) {
       </ModalHeader>
       <ModalFlexbox>
         <GrowCenterBoxColumn>
-          {props.disconnectedPlayers.map((player) => (
+          {props.disconnectedPlayers.map(player => (
             <ReconnectButton
               key={player.playerNum}
               onClick={() => {
@@ -65,10 +65,19 @@ const ModalHeader = styled(Header)`
 
 const DividerLine = styled.div`
   border-left: 1px solid ${({ theme }) => theme.lineBg};
+  display: none;
+
+  ${p => p.theme.tablet} {
+    display: block;
+  }
 `;
 
 const GrowCenterBoxColumn = styled(GrowCenterBox)`
   flex-direction: column;
+  flex: 100% 0 0;
+  ${p => p.theme.tablet} {
+    flex: 50% 0 0;
+  }
 `;
 
 const ReconnectButton = styled(SecondaryButton)`
