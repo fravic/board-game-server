@@ -20,10 +20,10 @@ export const Card = styled.div`
 
   max-width: 720px;
   margin: 0 auto;
-  padding: 20px;
+  padding: ${p => p.theme.gutterSmall};
 
-  ${({ theme }) => theme.tablet} {
-    padding: 45px;
+  ${p => p.theme.tablet} {
+    padding: ${p => p.theme.gutterLarge};
   }
 `;
 

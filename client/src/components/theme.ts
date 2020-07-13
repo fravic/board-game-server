@@ -27,6 +27,8 @@ export const theme = {
   med: "12px",
   large: "24px",
   xlarge: "48px",
+  gutterSmall: "20px",
+  gutterLarge: "40px",
 
   // Breakpoints
   tablet: "@media (min-width: 481px)",

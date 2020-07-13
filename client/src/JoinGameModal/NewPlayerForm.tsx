@@ -4,6 +4,7 @@ import React from "react";
 import styled from "styled-components/macro";
 
 import { PrimaryButton, SecondaryButton } from "../components/Button";
+import { DividerLine, DividerOr } from "../components/Divider";
 import { CenterColumnBox, Flexbox } from "../components/Flexbox";
 import { Input } from "../components/Form";
 import { Header } from "../components/Text";
@@ -85,24 +86,4 @@ const NameInput = styled(Input)`
   ${({ theme }) => theme.tablet} {
     margin-bottom: 0;
   }
-`;
-
-const DividerLine = styled.div`
-  border-bottom: 1px solid ${p => p.theme.lineBg};
-  margin: ${p => p.theme.xlarge} 0;
-  position: relative;
-
-  text-transform: uppercase;
-`;
-
-const DividerOr = styled.div`
-  padding: 4px 10px;
-  position: absolute;
-  left: 50%;
-  top: -13px;
-  margin-left: -22px;
-
-  color: ${p => p.theme.secondaryCta};
-  background: ${p => p.theme.lightBg};
-  font-weight: bold;
 `;
