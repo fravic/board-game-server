@@ -26,7 +26,7 @@ export const theme = {
 
   // CTAs
   primaryCta: GREEN,
-  secondaryCta: TRANSPARENT_GRAY,
+  secondaryCta: DARK_GRAY,
 
   // Spacing
   small: "6px",

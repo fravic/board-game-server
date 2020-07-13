@@ -205,9 +205,11 @@ export function Game(props: PropsType) {
       <Flexbox>
         <PlayerDisplay
           expectedActorPlayerNums={expectedActorPlayerNums}
+          isExpectingAnotherPlayer={isExpectingAnotherPlayer(game)}
           players={game?.players ?? null}
           localPlayerNum={playerNum}
           onResetBoardClick={handleResetBoardClick}
+          roomCode={roomCode}
           winningPlayerNum={game?.board.winningPlayerNum ?? null}
         />
         {gameId && game?.board && (
@@ -252,5 +254,16 @@ function isCurrentPlayerTurn(
     game.expectedActions.actions.find(
       ex => ex.type === "DropPiece" && ex.actorPlayerNum === playerNum
     ) !== undefined
+  );
+}
+
+function isExpectingAnotherPlayer(
+  game: GameFragment | null | undefined
+): boolean {
+  return (
+    !!game &&
+    !!game.expectedActions.actions.length &&
+    game.expectedActions.actions.find(ex => ex.type === "PlayerJoin") !==
+      undefined
   );
 }

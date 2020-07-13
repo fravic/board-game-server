@@ -8,8 +8,6 @@ Backend server for a generic board game. Design goals:
 - Persistance via Redis so a game can be dropped and picked up at any time by anyone
 - Replayability of games enabled by storage of every meaningful action performed
 
----
-
 ## Development
 
 ### Server (port 4000)
@@ -19,13 +17,21 @@ Backend server for a generic board game. Design goals:
 - `yarn dev-redis` to start Redis in Docker
 - `yarn dev` to start devserver and auto-generate nexus schema
 
+**For deployment, set the env vars:**
+
+- `REDIS_HOST`: The host of the Redis server
+- `REDIS_PORT`: The port of the Redis server
+
 ### Client (port 3000)
 
 - `cd client`
 - `yarn install` to install JS/TS packages
 - `yarn dev` to start devserver
 
----
+**For deployment, set the env vars:**
+
+- `REACT_APP_SERVER_ENDPOINT`: The URL of the server
+- `REACT_APP_URL_BASE`: Used to determine share URLs, etc
 
 ## Caveats
 
