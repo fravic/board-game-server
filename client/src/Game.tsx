@@ -2,15 +2,12 @@ import { useMutation, useQuery, useSubscription } from "@apollo/react-hooks";
 import gql from "graphql-tag";
 import React, { useEffect, useCallback } from "react";
 import { useParams, useHistory } from "react-router-dom";
-import styled, { css } from "styled-components/macro";
 
 import { Board } from "./Board";
-import { PrimaryButton } from "./components/Button";
 import { Flexbox } from "./components/Flexbox";
 import { JoinGameModal } from "./JoinGameModal/";
 import { PlayerDisplay } from "./PlayerDisplay/";
 import { boardFragmentGql } from "./fragments";
-import { isPlayerNum } from "./utils";
 
 import { Game as GameQuery, Game_game as GameFragment } from "./gql_types/Game";
 import { GameEvents, GameEventsVariables } from "./gql_types/GameEvents";
@@ -151,6 +148,13 @@ export function Game(props: PropsType) {
       skip: !gameId,
     }
   );
+  useEffect(() => {
+    if (error) {
+      toastContext.showToast("subscriptionError", {
+        message: error.toString(),
+      });
+    }
+  }, [error, toastContext]);
 
   const [playerNum, setPlayerNum] = React.useState<number | null>(null);
 
@@ -197,57 +201,44 @@ export function Game(props: PropsType) {
   );
 
   return (
-    <Flexbox>
-      <PlayerDisplay
-        expectedActorPlayerNums={expectedActorPlayerNums}
-        players={game?.players ?? null}
-        localPlayerNum={playerNum}
-        winningPlayerNum={game?.board.winningPlayerNum ?? null}
-      />
-      {gameId && game?.board && (
-        <Board
-          board={game?.board}
-          currentPlayerNum={playerNum}
-          gameId={gameId}
-          isCurrentPlayerTurn={isCurrentPlayerTurn(game, playerNum)}
-          players={game?.players}
+    <>
+      <Flexbox>
+        <PlayerDisplay
+          expectedActorPlayerNums={expectedActorPlayerNums}
+          players={game?.players ?? null}
+          localPlayerNum={playerNum}
+          onResetBoardClick={handleResetBoardClick}
+          winningPlayerNum={game?.board.winningPlayerNum ?? null}
         />
-      )}
-      {gameId && playerNum === null && !joinGameModalDismissed && (
-        <JoinGameModal
-          gameId={gameId}
-          onDismiss={() => setJoinGameModalDismissed(true)}
-          onSetPlayerNum={setPlayerNum}
-          disconnectedPlayers={disconnectedPlayers}
-          acceptingNewPlayers={Boolean(
-            game &&
-              game.expectedActions.actions.length &&
-              game.expectedActions.actions.find(ex => ex.type === "PlayerJoin")
-          )}
-        />
-      )}
-      {isPlayerNum(game?.board.winningPlayerNum) && (
-        <div
-          css={css`
-            padding: ${p => p.theme.med};
-            width: 100%;
-          `}
-        >
-          <PrimaryButton
-            onClick={handleResetBoardClick}
-            css={css`
-              margin-top: ${p => p.theme.med};
-            `}
-          >
-            Play again
-          </PrimaryButton>
-        </div>
-      )}
-      {error && error.toString()}
+        {gameId && game?.board && (
+          <Board
+            board={game?.board}
+            currentPlayerNum={playerNum}
+            gameId={gameId}
+            isCurrentPlayerTurn={isCurrentPlayerTurn(game, playerNum)}
+            players={game?.players}
+          />
+        )}
+        {gameId && playerNum === null && !joinGameModalDismissed && (
+          <JoinGameModal
+            gameId={gameId}
+            onDismiss={() => setJoinGameModalDismissed(true)}
+            onSetPlayerNum={setPlayerNum}
+            disconnectedPlayers={disconnectedPlayers}
+            acceptingNewPlayers={Boolean(
+              game &&
+                game.expectedActions.actions.length &&
+                game.expectedActions.actions.find(
+                  ex => ex.type === "PlayerJoin"
+                )
+            )}
+          />
+        )}
+      </Flexbox>
       {roomCodeLoading || gameLoading ? (
         <Spinner css="width: 100%;">loading</Spinner>
       ) : null}
-    </Flexbox>
+    </>
   );
 }
 

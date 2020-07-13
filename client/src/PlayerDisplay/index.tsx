@@ -1,6 +1,7 @@
 import React from "react";
-import styled from "styled-components";
+import styled from "styled-components/macro";
 
+import { PrimaryButton } from "../components/Button";
 import { PlayerName } from "./PlayerName";
 
 import { playerFragment as PlayerFragment } from "../gql_types/playerFragment";
@@ -9,6 +10,7 @@ type PropsType = {
   expectedActorPlayerNums: Set<number | null>;
   players: Array<PlayerFragment> | null;
   localPlayerNum: number | null;
+  onResetBoardClick: () => any;
   winningPlayerNum: number | null;
 };
 
@@ -24,6 +26,11 @@ export const PlayerDisplay = (props: PropsType) => {
           isWinner={props.winningPlayerNum === playerNum}
         />
       ))}
+      {props.winningPlayerNum !== null && (
+        <PrimaryButton onClick={props.onResetBoardClick}>
+          Play again
+        </PrimaryButton>
+      )}
     </PlayerDisplayWrapper>
   );
 };

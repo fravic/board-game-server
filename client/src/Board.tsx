@@ -80,18 +80,21 @@ function BoardColumn(props: BoardColumnProps) {
       onClick={clickable ? () => props.onClickDropPiece(columnIdx) : undefined}
     >
       {column.pieces.map((piece, idx) => (
-        <BoardPiecePadding key={idx}>
+        <div key={idx} css="padding: 3px">
           <BoardPieceContainer clickable={clickable}>
-            <BoardPiece
-              style={{
-                backgroundColor:
-                  piece.playerNum !== null
-                    ? props.players[piece.playerNum].colorHex
-                    : "transparent",
-              }}
-            />
+            {piece.playerNum !== null ? (
+              <BoardPiece
+                css={css`
+                  animation: ${boardPieceDropAnimation} 0.3s
+                    cubic-bezier(0.175, 0.885, 0.32, 1.275);
+                  background-color: ${props.players[piece.playerNum].colorHex};
+                `}
+              />
+            ) : (
+              <BoardPiece />
+            )}
           </BoardPieceContainer>
-        </BoardPiecePadding>
+        </div>
       ))}
     </BoardColumnContainer>
   );
@@ -123,10 +126,6 @@ const fadeInTop = keyframes`
     opacity: 1;
     transform: scaleX(1.3);
   }
-`;
-
-const BoardPiecePadding = styled.div`
-  padding: 3px;
 `;
 
 const boardPieceContainerClickableHover = css`
@@ -167,4 +166,13 @@ const BoardPiece = styled.div`
   width: 100%;
   border-radius: 100%;
   z-index: 2;
+`;
+
+const boardPieceDropAnimation = keyframes`
+  0% {
+    transform: scale(1.5);
+  }
+  100% {
+    transform: scale(1);
+  }
 `;
