@@ -1,4 +1,5 @@
 import { useMutation } from "@apollo/react-hooks";
+import GithubCorner from "react-github-corner";
 import gql from "graphql-tag";
 import React from "react";
 import { useHistory } from "react-router-dom";
@@ -8,6 +9,7 @@ import { PrimaryButton, SecondaryButton } from "./components/Button";
 import { DividerLine, DividerOr } from "./components/Divider";
 import { Input } from "./components/Form";
 import { Headline, Header } from "./components/Text";
+import { DARK_GRAY } from "./components/theme";
 
 import { CreateGame } from "./gql_types/CreateGame";
 
@@ -57,6 +59,10 @@ export function Lobby(props: PropsType) {
         />
         <SecondaryButton type="submit">Join game</SecondaryButton>
       </form>
+      <GithubCorner
+        href="https://github.com/fravic/board-game-server"
+        bannerColor={DARK_GRAY}
+      />
     </LobbyContainer>
   );
 }
@@ -73,6 +79,7 @@ const LobbyContainer = styled.div`
 `;
 
 const LobbyHeadline = styled(Headline)`
+  margin-top: ${p => p.theme.xlarge};
   margin-bottom: ${p => p.theme.large};
   text-align: center;
 `;
