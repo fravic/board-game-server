@@ -1,6 +1,7 @@
 import { useMutation } from "@apollo/react-hooks";
 import gql from "graphql-tag";
 import React, { useCallback } from "react";
+import styled, { css, keyframes } from "styled-components/macro";
 
 import { playerFragment as PlayerFragment } from "./gql_types/playerFragment";
 import { boardFragmentGql } from "./fragments";
@@ -49,7 +50,7 @@ export function Board(props: Props) {
     [currentPlayerNum, dropPiece, gameId]
   );
   return (
-    <div style={{ display: "flex" }}>
+    <BoardContainer>
       {board.columns.map((col, idx) => (
         <BoardColumn
           column={col}
@@ -60,7 +61,7 @@ export function Board(props: Props) {
           players={props.players}
         />
       ))}
-    </div>
+    </BoardContainer>
   );
 }
 
@@ -75,27 +76,95 @@ type BoardColumnProps = {
 function BoardColumn(props: BoardColumnProps) {
   const { clickable, column, columnIdx } = props;
   return (
-    <div
+    <BoardColumnContainer
       onClick={clickable ? () => props.onClickDropPiece(columnIdx) : undefined}
-      style={{
-        display: "flex",
-        flexDirection: "column-reverse",
-        boxShadow: clickable ? "0 0 3px rgba(0,255,0,0.5)" : "none",
-      }}
     >
       {column.pieces.map((piece, idx) => (
-        <div
-          key={idx}
-          style={{
-            backgroundColor:
-              piece.playerNum !== null
-                ? props.players[piece.playerNum].colorHex
-                : "#F2F3F4",
-            width: 20,
-            height: 20,
-          }}
-        />
+        <BoardPiecePadding key={idx}>
+          <BoardPieceContainer clickable={clickable}>
+            <BoardPiece
+              style={{
+                backgroundColor:
+                  piece.playerNum !== null
+                    ? props.players[piece.playerNum].colorHex
+                    : "transparent",
+              }}
+            />
+          </BoardPieceContainer>
+        </BoardPiecePadding>
       ))}
-    </div>
+    </BoardColumnContainer>
   );
 }
+
+const BoardContainer = styled.div`
+  display: flex;
+  flex-basis: 100%;
+  padding: 5px;
+
+  ${p => p.theme.tablet} {
+    flex-basis: 60%;
+    padding: ${p => p.theme.large};
+  }
+`;
+
+const BoardColumnContainer = styled.div`
+  width: calc(100% / 7);
+  display: flex;
+  flex-direction: column-reverse;
+`;
+
+const fadeInTop = keyframes`
+  0% {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  100% {
+    opacity: 1;
+    transform: scaleX(1.3);
+  }
+`;
+
+const BoardPiecePadding = styled.div`
+  padding: 3px;
+`;
+
+const boardPieceContainerClickableHover = css`
+  ${BoardColumnContainer}:hover &:after {
+    content: "▼";
+    font-size: 14px;
+    color: ${p => p.theme.primaryCta};
+    position: absolute;
+    left: 50%;
+    margin-left: -7px;
+    top: 50%;
+    margin-top: -7px;
+    animation: ${fadeInTop} 0.2s ease-out;
+    transform: scaleX(1.3);
+    z-index: 1;
+  }
+
+  ${p => p.theme.tablet} {
+    ${BoardColumnContainer}:hover &:after {
+      font-size: 20px;
+      margin-left: -10px;
+      margin-top: -10px;
+    }
+  }
+`;
+
+const BoardPieceContainer = styled.div<{ clickable: boolean }>`
+  position: relative;
+  background: ${p => p.theme.inputBg};
+  border-radius: 100%;
+
+  ${p => (p.clickable ? boardPieceContainerClickableHover : "")}
+`;
+
+const BoardPiece = styled.div`
+  position: relative;
+  padding-top: 100%;
+  width: 100%;
+  border-radius: 100%;
+  z-index: 2;
+`;

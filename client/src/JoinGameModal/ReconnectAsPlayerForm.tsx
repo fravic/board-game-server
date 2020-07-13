@@ -81,7 +81,11 @@ const GrowCenterBoxColumn = styled(GrowCenterBox)`
 `;
 
 const ReconnectButton = styled(SecondaryButton)`
-  &:not(:last-child) {
-    margin-bottom: ${({ theme }) => theme.med};
+  margin-bottom: ${({ theme }) => theme.med};
+
+  ${p => p.theme.tablet} {
+    &:last-child {
+      margin-bottom: 0;
+    }
   }
 `;

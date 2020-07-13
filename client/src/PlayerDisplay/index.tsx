@@ -31,6 +31,6 @@ const PlayerDisplayWrapper = styled.div`
   flex: 100% 0 0;
 
   ${p => p.theme.tablet} {
-    flex: 0 0 0;
+    flex: 1 0 0;
   }
 `;
