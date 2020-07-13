@@ -6,7 +6,10 @@ Backend server for a generic board game. Design goals:
 - Effortless game hosting and joining, with no authentication
 - Typed realtime API via GraphQL subscriptions
 - Persistance via Redis so a game can be dropped and picked up at any time by anyone
-- Replayability of games enabled by storage of every meaningful action performed
+
+## Overview
+
+<img src="./readme/player_one_turn.png" alt="Player One's Turn" width="557px">
 
 ## Development
 
