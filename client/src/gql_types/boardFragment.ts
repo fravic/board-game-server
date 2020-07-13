@@ -28,4 +28,5 @@ export interface boardFragment {
    * If set, the id of the player who has won the game.
    */
   winningPlayerNum: number | null;
+  lastPlayedColumn: number;
 }

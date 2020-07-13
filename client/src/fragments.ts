@@ -9,5 +9,6 @@ export const boardFragmentGql = gql`
       }
     }
     winningPlayerNum
+    lastPlayedColumn
   }
 `;

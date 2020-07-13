@@ -34,6 +34,7 @@ export const BoardGQL = schema.objectType({
       nullable: true,
       description: "If set, the id of the player who has won the game.",
     });
+    t.int("lastPlayedColumn", { nullable: true });
   },
 });
 

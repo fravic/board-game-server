@@ -7,6 +7,7 @@ export interface Board extends GameObject {
   gqlName: "Board";
   columns: Array<{ pieces: Array<{ playerNum: number | null }> }>;
   winningPlayerNum: number | null;
+  lastPlayedColumn: number | null;
 }
 
 const COLUMNS = 7;
@@ -14,7 +15,7 @@ const ROWS = 6;
 
 const DEFAULT_COLUMNS = Array(COLUMNS)
   .fill(null)
-  .map((_) => ({
+  .map(_ => ({
     pieces: Array(ROWS).fill({ playerNum: null }),
   }));
 
@@ -25,6 +26,7 @@ export function create(gameId: string): Board {
     key: "board",
     winningPlayerNum: null,
     columns: DEFAULT_COLUMNS,
+    lastPlayedColumn: null,
   };
 }
 
@@ -32,7 +34,8 @@ export const boardReducer = produce((draft: Board, action: Action) => {
   if (action.type === "DropPiece") {
     const { column, playerNum } = action as DropPieceAction;
     const pieces = draft.columns[column].pieces;
-    for (let i = 0; i < pieces.length; i++) {
+    let i = 0;
+    for (; i < pieces.length; i++) {
       if (pieces[i].playerNum === null) {
         pieces[i].playerNum = playerNum;
         if (_didNewPieceCauseWinner(draft, column, i)) {
@@ -41,6 +44,10 @@ export const boardReducer = produce((draft: Board, action: Action) => {
         break;
       }
     }
+    if (i === pieces.length) {
+      throw new Error("This column is full");
+    }
+    draft.lastPlayedColumn = column;
   } else if (action.type === "ResetBoard") {
     draft.columns = DEFAULT_COLUMNS;
     draft.winningPlayerNum = null;

@@ -13,6 +13,7 @@ type Board implements GameObject {
   columns: [BoardColumn!]!
   gameId: ID!
   key: String!
+  lastPlayedColumn: Int
 
   """If set, the id of the player who has won the game."""
   winningPlayerNum: Int

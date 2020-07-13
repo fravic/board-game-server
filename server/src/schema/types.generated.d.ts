@@ -71,6 +71,7 @@ export interface NexusGenFieldTypes {
     columns: NexusGenRootTypes['BoardColumn'][]; // [BoardColumn!]!
     gameId: string; // ID!
     key: string; // String!
+    lastPlayedColumn: number | null; // Int
     winningPlayerNum: number | null; // Int
   }
   BoardColumn: { // field return type

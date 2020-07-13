@@ -80,10 +80,10 @@ const HeaderPrompt = styled(Header)`
 
 const NameInput = styled(Input)`
   flex-grow: 1;
-  margin-right: ${p => p.theme.med};
   margin-bottom: ${p => p.theme.med};
 
   ${({ theme }) => theme.tablet} {
+    margin-right: ${p => p.theme.med};
     margin-bottom: 0;
   }
 `;
