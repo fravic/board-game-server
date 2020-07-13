@@ -5,7 +5,7 @@ Backend server for a generic board game. Design goals:
 - Easy to extend for any turn-based game implementation
 - Effortless game hosting and joining, with no authentication
 - Typed realtime API via GraphQL subscriptions
-- Persistance via Redis so a game can be dropped and picked up at any time by anyone
+- Persistence via Redis so a game can be dropped and picked up at any time by anyone
 
 ## Overview
 
