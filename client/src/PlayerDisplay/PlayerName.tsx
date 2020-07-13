@@ -8,6 +8,7 @@ import { playerFragment as PlayerFragment } from "../gql_types/playerFragment";
 type PropsType = {
   isLocalPlayer: boolean;
   isExpectedActor: boolean;
+  isWinner: boolean;
   player: PlayerFragment;
 };
 
@@ -21,6 +22,7 @@ export const PlayerName = (props: PropsType) => {
         <PlayerNameText style={{ color: colorHex }}>
           {props.player.name}
         </PlayerNameText>
+        {props.isWinner && <PlayerWinnerText>&nbsp;wins!</PlayerWinnerText>}
         {props.isExpectedActor && (
           <ExpectedActorArrowContainer>
             <ExpectedActorArrow colorHex={colorHex} />
@@ -37,6 +39,12 @@ const PlayerNameContainer = styled.div`
 `;
 
 const PlayerNameText = styled.div`
+  font-size: 34px;
+  font-weight: bold;
+  line-height: 36px;
+`;
+
+const PlayerWinnerText = styled.div`
   font-size: 34px;
   font-weight: bold;
   line-height: 36px;

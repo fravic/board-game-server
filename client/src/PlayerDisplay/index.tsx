@@ -9,6 +9,7 @@ type PropsType = {
   expectedActorPlayerNums: Set<number | null>;
   players: Array<PlayerFragment> | null;
   localPlayerNum: number | null;
+  winningPlayerNum: number | null;
 };
 
 export const PlayerDisplay = (props: PropsType) => {
@@ -20,6 +21,7 @@ export const PlayerDisplay = (props: PropsType) => {
           player={player}
           isExpectedActor={props.expectedActorPlayerNums.has(playerNum)}
           isLocalPlayer={props.localPlayerNum === playerNum}
+          isWinner={props.winningPlayerNum === playerNum}
         />
       ))}
     </PlayerDisplayWrapper>

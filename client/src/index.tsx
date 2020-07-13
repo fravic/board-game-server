@@ -1,5 +1,10 @@
 import React from "react";
 import ReactDOM from "react-dom";
+
+// Global TS declaration for styled-components CSS prop
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+import * as types from "styled-components/cssprop";
+
 import "./index.css";
 import { App } from "./App";
 import * as serviceWorker from "./serviceWorker";

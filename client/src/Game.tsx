@@ -2,9 +2,10 @@ import { useMutation, useQuery, useSubscription } from "@apollo/react-hooks";
 import gql from "graphql-tag";
 import React, { useEffect, useCallback } from "react";
 import { useParams, useHistory } from "react-router-dom";
-import styled from "styled-components/macro";
+import styled, { css } from "styled-components/macro";
 
 import { Board } from "./Board";
+import { PrimaryButton } from "./components/Button";
 import { Flexbox } from "./components/Flexbox";
 import { JoinGameModal } from "./JoinGameModal/";
 import { PlayerDisplay } from "./PlayerDisplay/";
@@ -201,6 +202,7 @@ export function Game(props: PropsType) {
         expectedActorPlayerNums={expectedActorPlayerNums}
         players={game?.players ?? null}
         localPlayerNum={playerNum}
+        winningPlayerNum={game?.board.winningPlayerNum ?? null}
       />
       {gameId && game?.board && (
         <Board
@@ -225,14 +227,25 @@ export function Game(props: PropsType) {
         />
       )}
       {isPlayerNum(game?.board.winningPlayerNum) && (
-        <div>
-          {game?.board.winningPlayerNum} wins!{" "}
-          <button onClick={handleResetBoardClick}>Play again</button>
+        <div
+          css={css`
+            padding: ${p => p.theme.med};
+            width: 100%;
+          `}
+        >
+          <PrimaryButton
+            onClick={handleResetBoardClick}
+            css={css`
+              margin-top: ${p => p.theme.med};
+            `}
+          >
+            Play again
+          </PrimaryButton>
         </div>
       )}
       {error && error.toString()}
       {roomCodeLoading || gameLoading ? (
-        <LoadingSpinner>loading</LoadingSpinner>
+        <Spinner css="width: 100%;">loading</Spinner>
       ) : null}
     </Flexbox>
   );
@@ -250,7 +263,3 @@ function isCurrentPlayerTurn(
     ) !== undefined
   );
 }
-
-const LoadingSpinner = styled(Spinner)`
-  width: 100%;
-`;

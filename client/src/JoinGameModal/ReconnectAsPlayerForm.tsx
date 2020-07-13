@@ -23,7 +23,7 @@ export function ReconnectAsPlayerForm(props: PropsType) {
           ? "Reconnect as existing player, or join as new player?"
           : "Reconnect as existing player, or just spectate?"}
       </ModalHeader>
-      <ModalFlexbox>
+      <Flexbox>
         <GrowCenterBoxColumn>
           {props.disconnectedPlayers.map(player => (
             <ReconnectButton
@@ -48,14 +48,10 @@ export function ReconnectAsPlayerForm(props: PropsType) {
             </SecondaryButton>
           )}
         </GrowCenterBox>
-      </ModalFlexbox>
+      </Flexbox>
     </>
   );
 }
-
-const ModalFlexbox = styled(Flexbox)`
-  min-height: 180px;
-`;
 
 const ModalHeader = styled(Header)`
   display: block;
