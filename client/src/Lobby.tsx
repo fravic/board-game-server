@@ -53,6 +53,7 @@ export function Lobby(props: PropsType) {
         <RoomCodeInput
           placeholder="eg. ABCD"
           onChange={e => setRoomCode(e.target.value)}
+          maxLength={4}
         />
         <SecondaryButton type="submit">Join game</SecondaryButton>
       </form>

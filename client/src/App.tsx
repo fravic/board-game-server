@@ -11,6 +11,7 @@ import { BrowserRouter, Redirect, Route, Switch } from "react-router-dom";
 import { ThemeProvider } from "styled-components/macro";
 
 import { ModalPortal } from "./components/Modal";
+import { ToastProvider } from "./components/Toast";
 import { Game } from "./Game";
 import { Lobby } from "./Lobby";
 import introspectionQueryResultData from "./gql_types/fragmentTypes.json";
@@ -43,15 +44,17 @@ export function App() {
   return (
     <ThemeProvider theme={theme}>
       <ApolloProvider client={client}>
-        <ModalPortal>
-          <BrowserRouter>
-            <Switch>
-              <Route path="/game/:roomCode" component={Game} />
-              <Redirect from="/g/:roomCode" to="/game/:roomCode" />
-              <Route path="*" component={Lobby} />
-            </Switch>
-          </BrowserRouter>
-        </ModalPortal>
+        <ToastProvider>
+          <ModalPortal>
+            <BrowserRouter>
+              <Switch>
+                <Route path="/game/:roomCode" component={Game} />
+                <Redirect from="/g/:roomCode" to="/game/:roomCode" />
+                <Route path="*" component={Lobby} />
+              </Switch>
+            </BrowserRouter>
+          </ModalPortal>
+        </ToastProvider>
       </ApolloProvider>
     </ThemeProvider>
   );

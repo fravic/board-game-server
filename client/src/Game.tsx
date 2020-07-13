@@ -1,7 +1,7 @@
 import { useMutation, useQuery, useSubscription } from "@apollo/react-hooks";
 import gql from "graphql-tag";
 import React, { useEffect, useCallback } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useHistory } from "react-router-dom";
 import styled from "styled-components/macro";
 
 import { Board } from "./Board";
@@ -16,6 +16,7 @@ import { GameEvents, GameEventsVariables } from "./gql_types/GameEvents";
 import { Heartbeat, HeartbeatVariables } from "./gql_types/Heartbeat";
 import { RoomCode as RoomCodeQuery } from "./gql_types/RoomCode";
 import { Spinner } from "./components/Spinner";
+import { ToastContext } from "./components/Toast";
 
 export const playerFragment = gql`
   fragment playerFragment on Player {
@@ -122,10 +123,18 @@ type PropsType = {};
 
 export function Game(props: PropsType) {
   const { roomCode } = useParams();
+  const history = useHistory();
+  const toastContext = React.useContext(ToastContext);
   const { data: roomCodeData, loading: roomCodeLoading } = useQuery<
     RoomCodeQuery
   >(roomCodeQueryGql, {
     variables: { code: roomCode },
+    onError: () => {
+      toastContext.showToast("roomCodeError", {
+        message: `Sorry, we couldn't find a game with room code ${roomCode}`,
+      });
+      history.replace("/");
+    },
   });
   const gameId = roomCodeData?.roomCode.gameId;
   const { data, loading: gameLoading } = useQuery<GameQuery>(gameQueryGql, {

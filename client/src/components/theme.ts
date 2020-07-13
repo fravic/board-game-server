@@ -5,6 +5,8 @@ export const TRANSPARENT_GRAY = "rgba(52, 73, 94, 50%)";
 export const LIGHT_GRAY = "#E5E5E5";
 export const LIGHTER_GRAY = "#F2F3F4";
 export const WHITE = "#FFF";
+export const RED = "#E23131";
+export const LIGHT_RED = "#F45353";
 
 // styled-components theme
 export const theme = {
@@ -17,6 +19,8 @@ export const theme = {
   lineBg: LIGHT_GRAY,
   inputBg: LIGHTER_GRAY,
   darkBg: TRANSPARENT_GRAY,
+  alertBg: RED,
+  alertLightBg: LIGHT_RED,
 
   // CTAs
   primaryCta: GREEN,
@@ -29,6 +33,7 @@ export const theme = {
   xlarge: "48px",
   gutterSmall: "20px",
   gutterLarge: "40px",
+  borderRadius: "12px",
 
   // Breakpoints
   tablet: "@media (min-width: 481px)",
