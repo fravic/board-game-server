@@ -17,6 +17,9 @@ export function create(
   fields: Pick<Player, "name" | "gameId" | "playerNum"> & Partial<Player>
 ): Player {
   const { gameId, name, playerNum } = fields;
+  if (name.length > 12) {
+    throw new Error("Player name is too long");
+  }
   return {
     gqlName: "Player",
     gameId,

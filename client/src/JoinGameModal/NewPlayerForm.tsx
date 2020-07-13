@@ -58,6 +58,7 @@ export function NewPlayerForm(props: PropsType) {
           <NameInput
             value={playerName}
             onChange={e => setPlayerName(e.currentTarget.value)}
+            maxLength={12}
           />
           <PrimaryButton type="submit">Join game</PrimaryButton>
         </Flexbox>
