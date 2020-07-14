@@ -97,8 +97,7 @@ function BoardColumn(props: BoardColumnProps) {
             {piece.playerNum !== null ? (
               <BoardPiece
                 css={css`
-                  animation: ${boardPieceDropAnimation} 0.3s
-                    cubic-bezier(0.175, 0.885, 0.32, 1.275);
+                  animation: ${boardPieceDropAnimation} 0.75s;
                   background-color: ${props.players[piece.playerNum].colorHex};
                 `}
               >
@@ -195,10 +194,27 @@ const BoardPiece = styled.div`
 
 const boardPieceDropAnimation = keyframes`
   0% {
-    transform: scale(1.5);
+    opacity: 0;
+    transform: translate3d(0, -50vh, 0);
+    /* ease in cubic */
+    animation-timing-function: cubic-bezier(0.32, 0, 0.67, 0);
+  }
+  40% {
+    opacity: 1;
+  }
+  80% {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+    /* ease out cubic */
+    animation-timing-function: cubic-bezier(0.33, 1, 0.68, 1);
+  }
+  90% {
+    transform: translate3d(0, -5vh, 0);
+    /* ease in cubic */
+    animation-timing-function: cubic-bezier(0.32, 0, 0.67, 0);
   }
   100% {
-    transform: scale(1);
+    transform: translate3d(0, 0, 0);
   }
 `;
 

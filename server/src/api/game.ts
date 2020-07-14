@@ -83,7 +83,7 @@ export async function dispatchAction(
   // Perform the action
   const [game, patches] = gameReducer(fetchedGame, action);
   // Note: changed array is shallow; only accounts for one level of GameObjects under Game
-  const changed = uniqBy(patches.map(getChangedFromPatch(game)), (n) => n.key);
+  const changed = uniqBy(patches.map(getChangedFromPatch(game)), n => n.key);
 
   // Publish the action (if any Nodes changed)
   await save(game, context.redis);
@@ -149,7 +149,10 @@ export const gameReducer = produceWithPatches((draft: Game, action: Action) => {
   } else if (action.type === "ResetBoard") {
     draft.board = boardApi.boardReducer(draft.board, action);
     draft.expectedActions = expectedActions(gameId, [
-      { type: "DropPiece", actorPlayerNum: 0 },
+      {
+        type: "DropPiece",
+        actorPlayerNum: Math.floor(Math.random() * NUM_PLAYERS),
+      },
     ]);
   }
 
