@@ -1,5 +1,5 @@
 import { enablePatches, produceWithPatches, Patch } from "immer";
-import { uniqBy } from "lodash";
+import { filter, uniqBy } from "lodash";
 import { v4 as uuid } from "uuid";
 
 import {
@@ -94,7 +94,10 @@ export async function dispatchAction(
     // Perform the action
     const [game, patches] = gameReducer(fetchedGame, action);
     // Note: changed array is shallow; only accounts for one level of GameObjects under Game
-    const changed = uniqBy(patches.map(getChangedFromPatch(game)), n => n.key);
+    const changed = uniqBy(
+      filter(patches.map(getChangedFromPatch(game))),
+      n => n.key
+    );
 
     // Publish the action (if any Nodes changed)
     await save(game, context.redis);
@@ -113,11 +116,10 @@ export async function dispatchAction(
 const CHANGED_PATH_DENYLIST = new Set<string | number>(["lastUpdated"]);
 
 const getChangedFromPatch = (game: Game) => (patch: Patch) => {
-  if (
-    patch.op === "replace" &&
-    patch.value.key &&
-    !CHANGED_PATH_DENYLIST.has(patch.path[0])
-  ) {
+  if (CHANGED_PATH_DENYLIST.has(patch.path[0])) {
+    return null;
+  }
+  if (patch.op === "replace" && patch.value.key) {
     // If a replace operation was done with a value that has a key, that object
     // must have been changed
     return patch.value;
