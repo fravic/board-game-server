@@ -82,7 +82,7 @@ const ConnectionIndicatorConnected = styled(ConnectionIndicator)`
 `;
 
 const ConnectionIndicatorDisconnected = styled(ConnectionIndicator)`
-  background: ${p => p.theme.alertLightBg};
+  background: ${p => p.theme.alertBgLight};
 `;
 
 const fadeInAnim = keyframes`

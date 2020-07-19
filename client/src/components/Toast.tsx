@@ -99,6 +99,6 @@ const ToastDiv = styled.div`
   cursor: pointer;
 
   &:hover {
-    background: ${p => p.theme.alertLightBg};
+    background: ${p => p.theme.alertBgLight};
   }
 `;

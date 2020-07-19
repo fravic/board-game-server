@@ -1,3 +1,5 @@
+import Color from "color";
+
 // Colors
 export const GREEN = "#2AD34F";
 export const LIGHT_GREEN = "#83E799";
@@ -7,7 +9,7 @@ export const LIGHT_GRAY = "#E5E5E5";
 export const LIGHTER_GRAY = "#F2F3F4";
 export const WHITE = "#FFF";
 export const RED = "#E23131";
-export const LIGHT_RED = "#F45353";
+export const LIGHT_RED = Color(RED).lighten(0.1).hex();
 
 // styled-components theme
 export const theme = {
@@ -21,12 +23,14 @@ export const theme = {
   inputBg: LIGHTER_GRAY,
   darkBg: TRANSPARENT_GRAY,
   alertBg: RED,
-  alertLightBg: LIGHT_RED,
+  alertBgLight: LIGHT_RED,
   okayBg: LIGHT_GREEN,
 
   // CTAs
   primaryCta: GREEN,
+  primaryCtaLight: LIGHT_GREEN,
   secondaryCta: DARK_GRAY,
+  secondaryCtaLight: Color(DARK_GRAY).lighten(0.4).hex(),
 
   // Spacing
   small: "6px",
