@@ -15,7 +15,12 @@ import { Player, playerReducer } from "./player";
 import { GameObject } from "./game_object";
 import { Redis } from "../redis";
 import * as boardApi from "./board";
-import { randomColorHex, EpochSeconds, currentEpochSeconds } from "./utils";
+import {
+  randomColorHex,
+  EpochSeconds,
+  currentEpochSeconds,
+  Mutex,
+} from "./utils";
 
 export interface Game extends GameObject {
   gqlName: "Game";
@@ -61,40 +66,47 @@ export async function save(game: Game, redis: Redis): Promise<Game> {
   return game;
 }
 
+const dispatchActionMutex = new Mutex();
+
 export async function dispatchAction(
   gameId: string,
   action: Action,
   actorPlayerNum: number | null,
   context: Context
 ): Promise<Game> {
-  const fetchedGame = await fetch(gameId, context.redis);
+  // Ensure only one action is processed at a time
+  return await dispatchActionMutex.dispatch(async () => {
+    const fetchedGame = await fetch(gameId, context.redis);
 
-  // Validate the action
-  if (!isActionExpected(action, actorPlayerNum, fetchedGame.expectedActions)) {
-    console.error(
-      "Received unexpected action",
-      JSON.stringify(action, null, 2),
-      "expected",
-      JSON.stringify(fetchedGame.expectedActions, null, 2)
-    );
-    throw new Error(`Received unexpected action of type: ${action.type}`);
-  }
-
-  // Perform the action
-  const [game, patches] = gameReducer(fetchedGame, action);
-  // Note: changed array is shallow; only accounts for one level of GameObjects under Game
-  const changed = uniqBy(patches.map(getChangedFromPatch(game)), n => n.key);
-
-  // Publish the action (if any Nodes changed)
-  await save(game, context.redis);
-  if (changed.length) {
-    await context.pubsub.publish(gameId, JSON.stringify({ changed }));
-    if (action.type !== "Heartbeat") {
-      console.dir([action, changed], { depth: null });
+    // Validate the action
+    if (
+      !isActionExpected(action, actorPlayerNum, fetchedGame.expectedActions)
+    ) {
+      console.error(
+        "Received unexpected action",
+        JSON.stringify(action, null, 2),
+        "expected",
+        JSON.stringify(fetchedGame.expectedActions, null, 2)
+      );
+      throw new Error(`Received unexpected action of type: ${action.type}`);
     }
-  }
 
-  return game;
+    // Perform the action
+    const [game, patches] = gameReducer(fetchedGame, action);
+    // Note: changed array is shallow; only accounts for one level of GameObjects under Game
+    const changed = uniqBy(patches.map(getChangedFromPatch(game)), n => n.key);
+
+    // Publish the action (if any Nodes changed)
+    await save(game, context.redis);
+    if (changed.length) {
+      await context.pubsub.publish(gameId, JSON.stringify({ changed }));
+      if (action.type !== "Heartbeat") {
+        console.dir([action, changed], { depth: null });
+      }
+    }
+
+    return game;
+  });
 }
 
 // Paths in the denylist will not result in an update being published to clients
