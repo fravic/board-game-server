@@ -101,7 +101,7 @@ export async function dispatchAction(
     if (changed.length) {
       await context.pubsub.publish(gameId, JSON.stringify({ changed }));
       if (action.type !== "Heartbeat") {
-        console.dir([action, changed], { depth: null });
+        console.dir([gameId, action], { depth: null });
       }
     }
 
