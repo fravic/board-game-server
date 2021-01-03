@@ -51,7 +51,7 @@ export interface GameEvents_gameEvents_changed_Game_board {
    * If set, the id of the player who has won the game.
    */
   winningPlayerNum: number | null;
-  lastPlayedColumn: number;
+  lastPlayedColumn: number | null;
 }
 
 export interface GameEvents_gameEvents_changed_Game {
@@ -96,7 +96,7 @@ export interface GameEvents_gameEvents_changed_Board {
    * If set, the id of the player who has won the game.
    */
   winningPlayerNum: number | null;
-  lastPlayedColumn: number;
+  lastPlayedColumn: number | null;
 }
 
 export interface GameEvents_gameEvents_changed_ExpectedActions_actions {

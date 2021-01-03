@@ -1,13 +1,14 @@
 import { useMutation, useQuery, useSubscription } from "@apollo/react-hooks";
 import gql from "graphql-tag";
 import React, { useEffect, useCallback } from "react";
-import { useParams, useHistory } from "react-router-dom";
+import { useParams, useHistory, useLocation } from "react-router-dom";
 
 import { Board } from "./Board";
 import { Flexbox } from "./components/Flexbox";
 import { JoinGameModal } from "./JoinGameModal/";
 import { PlayerDisplay } from "./PlayerDisplay/";
 import { boardFragmentGql } from "./fragments";
+import {usePlayerNumber} from './hooks';
 
 import { Game as GameQuery, Game_game as GameFragment } from "./gql_types/Game";
 import { GameEvents, GameEventsVariables } from "./gql_types/GameEvents";
@@ -120,7 +121,8 @@ export const resetBoardMutationGql = gql`
 type PropsType = {};
 
 export function Game(props: PropsType) {
-  const { roomCode } = useParams();
+  const { roomCode } = useParams<{roomCode: string}>();
+  const location = useLocation();
   const history = useHistory();
   const toastContext = React.useContext(ToastContext);
   const { data: roomCodeData, loading: roomCodeLoading } = useQuery<
@@ -156,7 +158,16 @@ export function Game(props: PropsType) {
     }
   }, [error, toastContext]);
 
-  const [playerNum, setPlayerNum] = React.useState<number | null>(null);
+  const acceptingNewPlayers = Boolean(
+    game &&
+      game.expectedActions.actions.length &&
+      game.expectedActions.actions.find(
+        ex => ex.type === "PlayerJoin"
+      )
+  )
+  const urlParams = new URLSearchParams(location.search);
+  const nameQueryParam = urlParams.get('name');
+  const [playerNum, setPlayerNum] = usePlayerNumber(game, nameQueryParam, acceptingNewPlayers);
 
   const disconnectedPlayers = (game?.players || []).filter(p => !p.isConnected);
   const disconnectedPlayerCount = disconnectedPlayers.length;
@@ -221,19 +232,13 @@ export function Game(props: PropsType) {
             players={game?.players}
           />
         )}
-        {gameId && playerNum === null && !joinGameModalDismissed && (
+        {gameId && playerNum === null && !nameQueryParam && !joinGameModalDismissed && (
           <JoinGameModal
             gameId={gameId}
             onDismiss={() => setJoinGameModalDismissed(true)}
             onSetPlayerNum={setPlayerNum}
             disconnectedPlayers={disconnectedPlayers}
-            acceptingNewPlayers={Boolean(
-              game &&
-                game.expectedActions.actions.length &&
-                game.expectedActions.actions.find(
-                  ex => ex.type === "PlayerJoin"
-                )
-            )}
+            acceptingNewPlayers={acceptingNewPlayers}
           />
         )}
       </Flexbox>

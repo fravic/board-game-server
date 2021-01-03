@@ -11,6 +11,11 @@ const Button = styled.button`
   ${({ theme }) => theme.tablet} {
     width: auto;
   }
+
+  &:disabled {
+    opacity: .6;
+    pointer-events: none;
+  }
 `;
 
 export const PrimaryButton = styled(Button)`
