@@ -1,5 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import styled, { css } from "styled-components/macro";
 
 import { PrimaryButton } from "../components/Button";
@@ -30,6 +31,9 @@ export const PlayerDisplay = (props: PropsType) => {
       setLinkCopied(true);
     }
   }, [roomJoinLink]);
+  const location = useLocation();
+  const urlParams = new URLSearchParams(location.search);
+  const isRocketCrab = urlParams.get('rocketcrab') !== null;
   return (
     <PlayerDisplayWrapper>
       {props.players?.map((player, playerNum) => (
@@ -41,7 +45,7 @@ export const PlayerDisplay = (props: PropsType) => {
           isWinner={props.winningPlayerNum === playerNum}
         />
       ))}
-      {localPlayerNum !== null && props.isExpectingAnotherPlayer && roomCode && (
+      {localPlayerNum !== null && props.isExpectingAnotherPlayer && roomCode && !isRocketCrab && (
         <StatusText>
           Send a friend this page to play!
           <br />
