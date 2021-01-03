@@ -7,7 +7,7 @@ import {
 import { SubscriptionClient } from "subscriptions-transport-ws";
 import { WebSocketLink } from "apollo-link-ws";
 import React from "react";
-import { BrowserRouter, Redirect, Route, Switch } from "react-router-dom";
+import { BrowserRouter, Route, Switch } from "react-router-dom";
 import { ThemeProvider } from "styled-components/macro";
 
 import { ModalPortal } from "./components/Modal";
@@ -49,7 +49,7 @@ export function App() {
             <BrowserRouter>
               <Switch>
                 <Route path="/game/:roomCode" component={Game} />
-                <Redirect from="/g/:roomCode" to="/game/:roomCode" />
+                <Route path="/g/:roomCode" component={Game} />
                 <Route path="*" component={Lobby} />
               </Switch>
             </BrowserRouter>
