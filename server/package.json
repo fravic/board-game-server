@@ -19,7 +19,7 @@
     "@types/uuid": "^8.0.0",
     "graphql-subscriptions": "^1.1.0",
     "graphql-yoga": "^1.18.3",
-    "immer": "^7.0.5",
+    "immer": "^8.0.1",
     "jest": "^26.1.0",
     "lodash": "^4.17.15",
     "nodemon": "^2.0.4",
