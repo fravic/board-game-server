@@ -21,7 +21,7 @@
     "graphql-yoga": "^1.18.3",
     "immer": "^7.0.5",
     "jest": "^26.1.0",
-    "lodash": "^4.17.15",
+    "lodash": "^4.17.21",
     "nodemon": "^2.0.4",
     "randomstring": "^1.1.5",
     "redis": "^3.0.2",
